@@ -1,41 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import HospitalSidebar from './HospitalSidebar'; 
 import HospitalHeader from './HospitalHeader'; 
+
+// 2. LARGE DATASET (To demonstrate filtering "Best 6" per department)
+const allCandidates = [
+  // --- ICU CANDIDATES ---
+  { id: 1, name: "Sarah Jenkins", role: "Senior ICU Nurse", department: "ICU", match: 99, avatar: "https://i.pravatar.cc/150?img=1", statusColor: "bg-emerald-500", tags: [{ icon: "star", text: "Top Rated" }] },
+  { id: 2, name: "Mike Ross", role: "ICU Specialist", department: "ICU", match: 97, avatar: "https://i.pravatar.cc/150?img=11", statusColor: "bg-emerald-500", tags: [{ icon: "verified", text: "Certified" }] },
+  { id: 3, name: "Jenny Kim", role: "ICU Nurse", department: "ICU", match: 95, avatar: "https://i.pravatar.cc/150?img=5", statusColor: "bg-emerald-500", tags: [{ icon: "schedule", text: "Available" }] },
+  { id: 4, name: "Tom Hardy", role: "ICU Assistant", department: "ICU", match: 91, avatar: "https://i.pravatar.cc/150?img=12", statusColor: "bg-amber-500", tags: [{ icon: "school", text: "Training" }] },
+  { id: 5, name: "Lisa Ann", role: "Senior ICU Nurse", department: "ICU", match: 89, avatar: "https://i.pravatar.cc/150?img=9", statusColor: "bg-emerald-500", tags: [{ icon: "star", text: "Expert" }] },
+  { id: 6, name: "Robert De", role: "ICU Tech", department: "ICU", match: 88, avatar: "https://i.pravatar.cc/150?img=13", statusColor: "bg-amber-500", tags: [{ icon: "timer", text: "On Call" }] },
+  { id: 7, name: "Bonny Wright", role: "ICU Nurse", department: "ICU", match: 75, avatar: "https://i.pravatar.cc/150?img=20", statusColor: "bg-slate-400", tags: [{ icon: "group", text: "Backup" }] },
+
+  // --- EMERGENCY CANDIDATES ---
+  { id: 8, name: "Marcus Thorne", role: "ER Specialist", department: "Emergency", match: 98, avatar: "https://i.pravatar.cc/150?img=14", statusColor: "bg-emerald-500", tags: [{ icon: "bolt", text: "Fast Response" }] },
+  { id: 9, name: "Emily Blunt", role: "Trauma Nurse", department: "Emergency", match: 96, avatar: "https://i.pravatar.cc/150?img=16", statusColor: "bg-emerald-500", tags: [{ icon: "medical_services", text: "Trauma Cert" }] },
+  { id: 10, name: "John Wick", role: "ER Doctor", department: "Emergency", match: 94, avatar: "https://i.pravatar.cc/150?img=3", statusColor: "bg-emerald-500", tags: [{ icon: "star", text: "Night Shift" }] },
+  { id: 11, name: "Sarah Connor", role: "ER Nurse", department: "Emergency", match: 93, avatar: "https://i.pravatar.cc/150?img=24", statusColor: "bg-emerald-500", tags: [{ icon: "local_shipping", text: "Near" }] },
+  { id: 12, name: "Kyle Reese", role: "ER Tech", department: "Emergency", match: 90, avatar: "https://i.pravatar.cc/150?img=55", statusColor: "bg-amber-500", tags: [{ icon: "schedule", text: "Flexible" }] },
+  { id: 13, name: "Ripley A.", role: "ER Assistant", department: "Emergency", match: 88, avatar: "https://i.pravatar.cc/150?img=32", statusColor: "bg-amber-500", tags: [{ icon: "check", text: "Verified" }] },
+  { id: 14, name: "New Guy", role: "ER Intern", department: "Emergency", match: 60, avatar: "https://i.pravatar.cc/150?img=60", statusColor: "bg-slate-400", tags: [{ icon: "school", text: "Intern" }] },
+
+  // --- RADIOLOGY CANDIDATES ---
+  { id: 15, name: "Elena Rodriguez", role: "Radiology Tech", department: "Radiology", match: 97, avatar: "https://i.pravatar.cc/150?img=22", statusColor: "bg-emerald-500", tags: [{ icon: "settings_accessibility", text: "X-Ray Expert" }] },
+  { id: 16, name: "Tony Stark", role: "MRI Specialist", department: "Radiology", match: 95, avatar: "https://i.pravatar.cc/150?img=18", statusColor: "bg-emerald-500", tags: [{ icon: "science", text: "Tech Savvy" }] },
+  { id: 17, name: "Bruce Banner", role: "Lab Tech", department: "Radiology", match: 92, avatar: "https://i.pravatar.cc/150?img=8", statusColor: "bg-emerald-500", tags: [{ icon: "biotech", text: "Research" }] },
+  { id: 18, name: "Natasha R.", role: "Scan Tech", department: "Radiology", match: 89, avatar: "https://i.pravatar.cc/150?img=44", statusColor: "bg-amber-500", tags: [{ icon: "timer", text: "Avail 2h" }] },
+  { id: 19, name: "Clint B.", role: "Radiologist", department: "Radiology", match: 85, avatar: "https://i.pravatar.cc/150?img=52", statusColor: "bg-amber-500", tags: [{ icon: "visibility", text: "Precision" }] },
+  { id: 20, name: "Wanda M.", role: "Assistant", department: "Radiology", match: 84, avatar: "https://i.pravatar.cc/150?img=41", statusColor: "bg-amber-500", tags: [{ icon: "favorite", text: "Care" }] }
+];
 
 const HospitalAnalytics = () => {
   // 1. STATE
   const [selectedDepartment, setSelectedDepartment] = useState('All');
   
-  // 2. LARGE DATASET (To demonstrate filtering "Best 6" per department)
-  const allCandidates = [
-    // --- ICU CANDIDATES ---
-    { id: 1, name: "Sarah Jenkins", role: "Senior ICU Nurse", department: "ICU", match: 99, avatar: "https://i.pravatar.cc/150?img=1", statusColor: "bg-emerald-500", tags: [{ icon: "star", text: "Top Rated" }] },
-    { id: 2, name: "Mike Ross", role: "ICU Specialist", department: "ICU", match: 97, avatar: "https://i.pravatar.cc/150?img=11", statusColor: "bg-emerald-500", tags: [{ icon: "verified", text: "Certified" }] },
-    { id: 3, name: "Jenny Kim", role: "ICU Nurse", department: "ICU", match: 95, avatar: "https://i.pravatar.cc/150?img=5", statusColor: "bg-emerald-500", tags: [{ icon: "schedule", text: "Available" }] },
-    { id: 4, name: "Tom Hardy", role: "ICU Assistant", department: "ICU", match: 91, avatar: "https://i.pravatar.cc/150?img=12", statusColor: "bg-amber-500", tags: [{ icon: "school", text: "Training" }] },
-    { id: 5, name: "Lisa Ann", role: "Senior ICU Nurse", department: "ICU", match: 89, avatar: "https://i.pravatar.cc/150?img=9", statusColor: "bg-emerald-500", tags: [{ icon: "star", text: "Expert" }] },
-    { id: 6, name: "Robert De", role: "ICU Tech", department: "ICU", match: 88, avatar: "https://i.pravatar.cc/150?img=13", statusColor: "bg-amber-500", tags: [{ icon: "timer", text: "On Call" }] },
-    { id: 7, name: "Bonny Wright", role: "ICU Nurse", department: "ICU", match: 75, avatar: "https://i.pravatar.cc/150?img=20", statusColor: "bg-slate-400", tags: [{ icon: "group", text: "Backup" }] },
-
-    // --- EMERGENCY CANDIDATES ---
-    { id: 8, name: "Marcus Thorne", role: "ER Specialist", department: "Emergency", match: 98, avatar: "https://i.pravatar.cc/150?img=14", statusColor: "bg-emerald-500", tags: [{ icon: "bolt", text: "Fast Response" }] },
-    { id: 9, name: "Emily Blunt", role: "Trauma Nurse", department: "Emergency", match: 96, avatar: "https://i.pravatar.cc/150?img=16", statusColor: "bg-emerald-500", tags: [{ icon: "medical_services", text: "Trauma Cert" }] },
-    { id: 10, name: "John Wick", role: "ER Doctor", department: "Emergency", match: 94, avatar: "https://i.pravatar.cc/150?img=3", statusColor: "bg-emerald-500", tags: [{ icon: "star", text: "Night Shift" }] },
-    { id: 11, name: "Sarah Connor", role: "ER Nurse", department: "Emergency", match: 93, avatar: "https://i.pravatar.cc/150?img=24", statusColor: "bg-emerald-500", tags: [{ icon: "local_shipping", text: "Near" }] },
-    { id: 12, name: "Kyle Reese", role: "ER Tech", department: "Emergency", match: 90, avatar: "https://i.pravatar.cc/150?img=55", statusColor: "bg-amber-500", tags: [{ icon: "schedule", text: "Flexible" }] },
-    { id: 13, name: "Ripley A.", role: "ER Assistant", department: "Emergency", match: 88, avatar: "https://i.pravatar.cc/150?img=32", statusColor: "bg-amber-500", tags: [{ icon: "check", text: "Verified" }] },
-    { id: 14, name: "New Guy", role: "ER Intern", department: "Emergency", match: 60, avatar: "https://i.pravatar.cc/150?img=60", statusColor: "bg-slate-400", tags: [{ icon: "school", text: "Intern" }] },
-
-    // --- RADIOLOGY CANDIDATES ---
-    { id: 15, name: "Elena Rodriguez", role: "Radiology Tech", department: "Radiology", match: 97, avatar: "https://i.pravatar.cc/150?img=22", statusColor: "bg-emerald-500", tags: [{ icon: "settings_accessibility", text: "X-Ray Expert" }] },
-    { id: 16, name: "Tony Stark", role: "MRI Specialist", department: "Radiology", match: 95, avatar: "https://i.pravatar.cc/150?img=18", statusColor: "bg-emerald-500", tags: [{ icon: "science", text: "Tech Savvy" }] },
-    { id: 17, name: "Bruce Banner", role: "Lab Tech", department: "Radiology", match: 92, avatar: "https://i.pravatar.cc/150?img=8", statusColor: "bg-emerald-500", tags: [{ icon: "biotech", text: "Research" }] },
-    { id: 18, name: "Natasha R.", role: "Scan Tech", department: "Radiology", match: 89, avatar: "https://i.pravatar.cc/150?img=44", statusColor: "bg-amber-500", tags: [{ icon: "timer", text: "Avail 2h" }] },
-    { id: 19, name: "Clint B.", role: "Radiologist", department: "Radiology", match: 85, avatar: "https://i.pravatar.cc/150?img=52", statusColor: "bg-amber-500", tags: [{ icon: "visibility", text: "Precision" }] },
-    { id: 20, name: "Wanda M.", role: "Assistant", department: "Radiology", match: 84, avatar: "https://i.pravatar.cc/150?img=41", statusColor: "bg-amber-500", tags: [{ icon: "favorite", text: "Care" }] }
-  ];
-
-  const [filteredCandidates, setFilteredCandidates] = useState([]);
+  const [filteredCandidates, setFilteredCandidates] = useState(() => {
+    const result = [...allCandidates].sort((a, b) => b.match - a.match);
+    return result.slice(0, 6);
+  });
 
   // 3. LOGIC: Filter, Sort by Match, Slice Top 6
   const handleFilterApply = () => {
@@ -56,11 +59,6 @@ const HospitalAnalytics = () => {
 
     setFilteredCandidates(bestSix);
   };
-
-  // Initial Load (Show All Best 6 by default)
-  useEffect(() => {
-    handleFilterApply();
-  }, []); // Run once on mount
 
   return (
     <div className="bg-slate-50 dark:bg-slate-950 font-display text-slate-900 dark:text-slate-100 h-screen flex overflow-hidden">
