@@ -1,284 +1,187 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import HospitalSidebar from './HospitalSidebar'; 
+import HospitalHeader from './HospitalHeader'; 
 
 const HospitalAnalytics = () => {
+  // 1. STATE
+  const [selectedDepartment, setSelectedDepartment] = useState('All');
+  
+  // 2. LARGE DATASET (To demonstrate filtering "Best 6" per department)
+  const allCandidates = [
+    // --- ICU CANDIDATES ---
+    { id: 1, name: "Sarah Jenkins", role: "Senior ICU Nurse", department: "ICU", match: 99, avatar: "https://i.pravatar.cc/150?img=1", statusColor: "bg-emerald-500", tags: [{ icon: "star", text: "Top Rated" }] },
+    { id: 2, name: "Mike Ross", role: "ICU Specialist", department: "ICU", match: 97, avatar: "https://i.pravatar.cc/150?img=11", statusColor: "bg-emerald-500", tags: [{ icon: "verified", text: "Certified" }] },
+    { id: 3, name: "Jenny Kim", role: "ICU Nurse", department: "ICU", match: 95, avatar: "https://i.pravatar.cc/150?img=5", statusColor: "bg-emerald-500", tags: [{ icon: "schedule", text: "Available" }] },
+    { id: 4, name: "Tom Hardy", role: "ICU Assistant", department: "ICU", match: 91, avatar: "https://i.pravatar.cc/150?img=12", statusColor: "bg-amber-500", tags: [{ icon: "school", text: "Training" }] },
+    { id: 5, name: "Lisa Ann", role: "Senior ICU Nurse", department: "ICU", match: 89, avatar: "https://i.pravatar.cc/150?img=9", statusColor: "bg-emerald-500", tags: [{ icon: "star", text: "Expert" }] },
+    { id: 6, name: "Robert De", role: "ICU Tech", department: "ICU", match: 88, avatar: "https://i.pravatar.cc/150?img=13", statusColor: "bg-amber-500", tags: [{ icon: "timer", text: "On Call" }] },
+    { id: 7, name: "Bonny Wright", role: "ICU Nurse", department: "ICU", match: 75, avatar: "https://i.pravatar.cc/150?img=20", statusColor: "bg-slate-400", tags: [{ icon: "group", text: "Backup" }] },
+
+    // --- EMERGENCY CANDIDATES ---
+    { id: 8, name: "Marcus Thorne", role: "ER Specialist", department: "Emergency", match: 98, avatar: "https://i.pravatar.cc/150?img=14", statusColor: "bg-emerald-500", tags: [{ icon: "bolt", text: "Fast Response" }] },
+    { id: 9, name: "Emily Blunt", role: "Trauma Nurse", department: "Emergency", match: 96, avatar: "https://i.pravatar.cc/150?img=16", statusColor: "bg-emerald-500", tags: [{ icon: "medical_services", text: "Trauma Cert" }] },
+    { id: 10, name: "John Wick", role: "ER Doctor", department: "Emergency", match: 94, avatar: "https://i.pravatar.cc/150?img=3", statusColor: "bg-emerald-500", tags: [{ icon: "star", text: "Night Shift" }] },
+    { id: 11, name: "Sarah Connor", role: "ER Nurse", department: "Emergency", match: 93, avatar: "https://i.pravatar.cc/150?img=24", statusColor: "bg-emerald-500", tags: [{ icon: "local_shipping", text: "Near" }] },
+    { id: 12, name: "Kyle Reese", role: "ER Tech", department: "Emergency", match: 90, avatar: "https://i.pravatar.cc/150?img=55", statusColor: "bg-amber-500", tags: [{ icon: "schedule", text: "Flexible" }] },
+    { id: 13, name: "Ripley A.", role: "ER Assistant", department: "Emergency", match: 88, avatar: "https://i.pravatar.cc/150?img=32", statusColor: "bg-amber-500", tags: [{ icon: "check", text: "Verified" }] },
+    { id: 14, name: "New Guy", role: "ER Intern", department: "Emergency", match: 60, avatar: "https://i.pravatar.cc/150?img=60", statusColor: "bg-slate-400", tags: [{ icon: "school", text: "Intern" }] },
+
+    // --- RADIOLOGY CANDIDATES ---
+    { id: 15, name: "Elena Rodriguez", role: "Radiology Tech", department: "Radiology", match: 97, avatar: "https://i.pravatar.cc/150?img=22", statusColor: "bg-emerald-500", tags: [{ icon: "settings_accessibility", text: "X-Ray Expert" }] },
+    { id: 16, name: "Tony Stark", role: "MRI Specialist", department: "Radiology", match: 95, avatar: "https://i.pravatar.cc/150?img=18", statusColor: "bg-emerald-500", tags: [{ icon: "science", text: "Tech Savvy" }] },
+    { id: 17, name: "Bruce Banner", role: "Lab Tech", department: "Radiology", match: 92, avatar: "https://i.pravatar.cc/150?img=8", statusColor: "bg-emerald-500", tags: [{ icon: "biotech", text: "Research" }] },
+    { id: 18, name: "Natasha R.", role: "Scan Tech", department: "Radiology", match: 89, avatar: "https://i.pravatar.cc/150?img=44", statusColor: "bg-amber-500", tags: [{ icon: "timer", text: "Avail 2h" }] },
+    { id: 19, name: "Clint B.", role: "Radiologist", department: "Radiology", match: 85, avatar: "https://i.pravatar.cc/150?img=52", statusColor: "bg-amber-500", tags: [{ icon: "visibility", text: "Precision" }] },
+    { id: 20, name: "Wanda M.", role: "Assistant", department: "Radiology", match: 84, avatar: "https://i.pravatar.cc/150?img=41", statusColor: "bg-amber-500", tags: [{ icon: "favorite", text: "Care" }] }
+  ];
+
+  const [filteredCandidates, setFilteredCandidates] = useState([]);
+
+  // 3. LOGIC: Filter, Sort by Match, Slice Top 6
+  const handleFilterApply = () => {
+    let result = [];
+
+    // Step A: Filter by Department
+    if (selectedDepartment === 'All') {
+      result = [...allCandidates];
+    } else {
+      result = allCandidates.filter(c => c.department === selectedDepartment);
+    }
+
+    // Step B: Sort by Match Score (Highest to Lowest)
+    result.sort((a, b) => b.match - a.match);
+
+    // Step C: Take only the top 6
+    const bestSix = result.slice(0, 6);
+
+    setFilteredCandidates(bestSix);
+  };
+
+  // Initial Load (Show All Best 6 by default)
+  useEffect(() => {
+    handleFilterApply();
+  }, []); // Run once on mount
+
   return (
-    <div className="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 min-h-screen flex overflow-hidden font-inter">
-      <aside className="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col shrink-0">
-        <div className="p-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary-blue rounded-xl flex items-center justify-center text-white">
-              <span className="material-symbols-rounded">medical_services</span>
-            </div>
-            <div>
-              <h1 className="font-bold text-lg leading-tight">CareSync</h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Hospital Admin</p>
-            </div>
-          </div>
-        </div>
-        <nav className="flex-1 px-4 space-y-1 mt-4">
-          <a className="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
-            <span className="material-symbols-rounded text-xl">dashboard</span>
-            <span className="font-medium">Dashboard</span>
-          </a>
-          <a className="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
-            <span className="material-symbols-rounded text-xl">group</span>
-            <span className="font-medium">Staff Directory</span>
-          </a>
-          <a className="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
-            <span className="material-symbols-rounded text-xl">calendar_today</span>
-            <span className="font-medium">Shift Schedule</span>
-          </a>
-          <a className="bg-purple-600/10 text-purple-600 rounded-xl flex items-center gap-3 px-4 py-3 transition-colors" href="#">
-            <span className="material-symbols-rounded text-xl">auto_awesome</span>
-            <span className="font-medium">AI Recommendations</span>
-          </a>
-          <a className="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
-            <span className="material-symbols-rounded text-xl">insights</span>
-            <span className="font-medium">Analytics</span>
-          </a>
-          <a className="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
-            <span className="material-symbols-rounded text-xl">settings</span>
-            <span className="font-medium">Settings</span>
-          </a>
-        </nav>
-        <div className="p-4 border-t border-slate-200 dark:border-slate-800">
-          <div className="flex items-center gap-3 p-2">
-            <div className="w-10 h-10 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-              <img alt="Admin Profile" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLkRCRVlZETuWMPFuk44Vl8XPz1c0sX3JhSosMtawjcED3NN9WbPqOZPPkHWPSajAChkF8v2T0QCaUWLDf4qO11YE-19yOoZr5bUwk4sIkPqJrF1kusKiWHwgl_SR_EHdwkPIPcMHJWDDyzVh93bPia38Ph8wAne8jIhCNIkFd3BIv3n1mcZD275zypio-BiEkmnjmlJnQpIBBRqXv8NluggaCz2Dz6SvulBEX6dWGmLlD8eVlTwRSPhjgocknHGWHH-9i4XtkqiA" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">Dr. Julian Vance</p>
-              <p className="text-xs text-slate-500 truncate">Chief Administrator</p>
-            </div>
-          </div>
-        </div>
-      </aside>
-      <main className="flex-1 overflow-y-auto p-8 lg:p-12">
-        <header className="flex justify-between items-start mb-10">
-          <div>
-            <h2 className="text-3xl font-bold mb-2">Good morning, Julian</h2>
-            <p className="text-slate-500 dark:text-slate-400">You have 12 critical shifts that need staffing today.</p>
-          </div>
-          <button className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-semibold shadow-sm hover:shadow-md transition-all">
-            Create New Shift
-          </button>
-        </header>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="font-semibold text-slate-800 dark:text-white">Staffing Needs</h3>
-              <span className="text-xs font-medium text-primary-blue bg-blue-50 dark:bg-blue-900/20 px-2.5 py-1 rounded-full">Weekly View</span>
-            </div>
-            <div className="flex items-end gap-2 h-32 mb-4">
-              <div className="flex-1 bg-slate-100 dark:bg-slate-800 rounded-t-lg h-[60%]"></div>
-              <div className="flex-1 bg-slate-100 dark:bg-slate-800 rounded-t-lg h-[80%]"></div>
-              <div className="flex-1 bg-primary-blue rounded-t-lg h-[100%]"></div>
-              <div className="flex-1 bg-slate-100 dark:bg-slate-800 rounded-t-lg h-[45%]"></div>
-              <div className="flex-1 bg-slate-100 dark:bg-slate-800 rounded-t-lg h-[70%]"></div>
-              <div className="flex-1 bg-slate-100 dark:bg-slate-800 rounded-t-lg h-[90%]"></div>
-              <div className="flex-1 bg-slate-100 dark:bg-slate-800 rounded-t-lg h-[55%]"></div>
-            </div>
-            <div className="flex justify-between text-[10px] text-slate-400 uppercase tracking-wider">
-              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
-            </div>
-          </div>
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="font-semibold text-slate-800 dark:text-white">Unit Efficiency</h3>
-              <span className="material-symbols-rounded text-slate-400">more_horiz</span>
-            </div>
-            <div className="flex items-center justify-center py-4">
-              <div className="relative w-32 h-32">
-                <svg className="w-full h-full transform -rotate-90">
-                  <circle className="text-slate-100 dark:text-slate-800" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" strokeWidth="8"></circle>
-                  <circle className="text-primary-blue" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" strokeDasharray="364.4" strokeDashoffset="20" strokeWidth="8"></circle>
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-3xl font-bold">94%</span>
-                  <span className="text-[10px] text-slate-500 uppercase">Optimal</span>
-                </div>
+    <div className="bg-slate-50 dark:bg-slate-950 font-display text-slate-900 dark:text-slate-100 h-screen flex overflow-hidden">
+      
+      {/* 1. Sidebar */}
+      <HospitalSidebar activePage="Recommendations" />
+
+      {/* Main Content Wrapper */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        
+        {/* 2. Header */}
+        <HospitalHeader />
+
+        {/* Main Body */}
+        <main className="flex-1 overflow-y-auto p-8">
+            
+            {/* Page Header & Filter */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight">Smart Staff Matches</h2>
+                <p className="text-slate-500 text-sm mt-1">
+                  Showing the <strong>Top 6 Candidates</strong> based on your selection.
+                </p>
               </div>
-            </div>
-            <div className="mt-4 text-center">
-              <p className="text-sm text-slate-500">Efficiency is 4% higher than last week</p>
-            </div>
-          </div>
-        </div>
-        <section>
-          <h4 className="text-lg font-semibold mb-4">Pending Requests</h4>
-          <div className="space-y-4">
-            <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                  <span className="material-symbols-rounded">medical_information</span>
-                </div>
-                <div>
-                  <p className="font-medium">ICU - Night Shift (12h)</p>
-                  <p className="text-xs text-slate-500">Requested 2h ago • Urgency: High</p>
-                </div>
-              </div>
-              <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200"></div>
-                <div className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-slate-300"></div>
-                <div className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-primary-blue flex items-center justify-center text-[10px] text-white">+5</div>
-              </div>
-            </div>
-            <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                  <span className="material-symbols-rounded">emergency</span>
-                </div>
-                <div>
-                  <p className="font-medium">ER - Swing Shift (8h)</p>
-                  <p className="text-xs text-slate-500">Requested 4h ago • Urgency: Normal</p>
-                </div>
-              </div>
-              <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200"></div>
-                <div className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-primary-blue flex items-center justify-center text-[10px] text-white">+2</div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-      <aside className="w-[400px] border-l border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex flex-col shrink-0">
-        <div className="p-6 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-rounded text-primary-blue">auto_awesome</span>
-            <h3 className="font-bold text-slate-800 dark:text-white">Smart Staff Matches</h3>
-          </div>
-          <button className="text-slate-400 hover:text-slate-600 transition-colors">
-            <span className="material-symbols-rounded">settings</span>
-          </button>
-        </div>
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
-            <div className="p-5">
-              <div className="flex items-start gap-4 mb-4">
+
+              {/* FILTER CONTROLS */}
+              <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
                 <div className="relative">
-                  <img alt="Staff Avatar" className="w-14 h-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCG92Q8fO3IQ0fvFM89kytl71mPrrIPfZ_T0T7V1Ut7CqlcAs_KEQ3GdHtlCUGTzZEL6ujwBXi8_QFF7vBzgea2b2eRSOWKCjEBICVP9A4ZOex-XQNJtvkBNjDQ-MXW9Husztq4BKTAospyaQk25qX8lusb_wssS-EpOkYuuJLhnBQR6ckma9T8nxoyxRrN8fTZn2CgZHSCSP4KidfzK0Cd9rHmXmiJl8aZjkPNaLWbHrib5nEpYd_9WsPJo8EfoU5ixNT-IYZtZZo" />
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">filter_alt</span>
+                  <select 
+                    value={selectedDepartment}
+                    onChange={(e) => setSelectedDepartment(e.target.value)}
+                    className="pl-10 pr-8 py-2 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-[#135bec]/20 outline-none cursor-pointer appearance-none min-w-[200px]"
+                  >
+                    <option value="All">All Departments (Best 6)</option>
+                    <option value="ICU">Intensive Care Unit (ICU)</option>
+                    <option value="Emergency">Emergency Room</option>
+                    <option value="Radiology">Radiology</option>
+                  </select>
+                  <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xl">expand_more</span>
                 </div>
-                <div className="flex-1">
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-bold text-slate-900 dark:text-white">Sarah Jenkins</h4>
-                    <span className="material-symbols-rounded text-slate-300 text-sm">more_vert</span>
-                  </div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Senior ICU Nurse</p>
-                </div>
-              </div>
-              <div className="mb-5">
-                <div className="flex justify-between items-center mb-1.5">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-primary-blue">Match Confidence</span>
-                  <span className="text-xs font-bold text-primary-blue">98%</span>
-                </div>
-                <div className="h-2 w-full bg-purple-100 dark:bg-purple-900/30 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary-blue rounded-full w-[98%]"></div>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2 mb-6">
-                <span className="px-2.5 py-1 bg-purple-50 dark:bg-purple-900/20 text-primary-blue text-[11px] font-semibold rounded-lg flex items-center gap-1">
-                  <span className="material-symbols-rounded text-[14px]">star</span> 100% Skill Match
-                </span>
-                <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[11px] font-semibold rounded-lg flex items-center gap-1">
-                  <span className="material-symbols-rounded text-[14px]">favorite</span> Top rated in ICU
-                </span>
-              </div>
-              <div className="flex gap-2">
-                <button className="flex-1 py-2.5 bg-primary-blue text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity">
-                  Quick Invite
-                </button>
-                <button className="px-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                  <span className="material-symbols-rounded">chat_bubble</span>
+                
+                <button 
+                  onClick={handleFilterApply}
+                  className="px-5 py-2 bg-[#135bec] text-white text-sm font-bold rounded-lg hover:bg-[#135bec]/90 transition-all shadow-md shadow-[#135bec]/20 cursor-pointer flex items-center gap-1"
+                >
+                  <span>Apply</span>
+                  <span className="material-symbols-outlined text-sm">check</span>
                 </button>
               </div>
             </div>
-          </div>
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
-            <div className="p-5">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="relative">
-                  <img alt="Staff Avatar" className="w-14 h-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoK_pAuakPftPthWnx2ZAa1wPmZVy1RWuU4liYCfyxiQTQAMFOy9kFqynwuvgFKeMngZn8bqaFzEOrEuFJroK8lXZueWfXR9swP2_SjwuzRdTZUQ17TO7dSVlvDvvfzQxCms2My3naFPogLwtsTmyi9z2uNtVSQXwEg1x6I-JOJZ-BiHnG6wFIGLojueokoYiEnWU4picOHKeeLJeRUp2QIoz9bT4Y0-fAzEcYZz1XgOLyr1fkAReFLSm1SDEleBI9MuO_iw_zzhc" />
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
-                </div>
-                <div className="flex-1">
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-bold text-slate-900 dark:text-white">Marcus Thorne</h4>
-                    <span className="material-symbols-rounded text-slate-300 text-sm">more_vert</span>
+
+            {/* Smart Matches Grid */}
+            {filteredCandidates.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {filteredCandidates.map((candidate) => (
+                  <div key={candidate.id} className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 group hover:border-[#135bec]/30 transition-all hover:shadow-md animate-in fade-in zoom-in duration-300">
+                      {/* Header */}
+                      <div className="flex items-start gap-4 mb-5">
+                        <div className="relative">
+                          <img 
+                            alt="Staff Avatar" 
+                            className="w-14 h-14 rounded-full object-cover ring-2 ring-transparent group-hover:ring-[#135bec]/20 transition-all" 
+                            src={candidate.avatar} 
+                          />
+                          <div className={`absolute -bottom-1 -right-1 w-4 h-4 ${candidate.statusColor} border-2 border-white dark:border-slate-900 rounded-full`}></div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start">
+                             <h4 className="font-bold text-lg text-slate-900 dark:text-white truncate">{candidate.name}</h4>
+                             {/* Dept Badge */}
+                             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 uppercase tracking-wide">{candidate.department}</span>
+                          </div>
+                          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{candidate.role}</p>
+                        </div>
+                      </div>
+                      
+                      {/* Progress Bar */}
+                      <div className="mb-5">
+                        <div className="flex justify-between items-center mb-1.5">
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-[#135bec]">Match Confidence</span>
+                          <span className="text-sm font-bold text-[#135bec]">{candidate.match}%</span>
+                        </div>
+                        <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-[#135bec] rounded-full transition-all duration-500" 
+                            style={{ width: `${candidate.match}%` }}
+                          ></div>
+                        </div>
+                      </div>
+
+                      {/* Tags */}
+                      <div className="flex flex-wrap gap-2 mb-6 min-h-[32px]">
+                        {candidate.tags.map((tag, index) => (
+                          <span key={index} className="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[11px] font-bold rounded-lg flex items-center gap-1.5">
+                            <span className="material-symbols-outlined text-[14px]">{tag.icon}</span> {tag.text}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex gap-3">
+                        <button className="flex-1 py-2.5 bg-[#135bec] text-white text-sm font-bold rounded-xl hover:bg-[#135bec]/90 transition-colors cursor-pointer shadow-lg shadow-[#135bec]/20">
+                          Quick Invite
+                        </button>
+                      </div>
                   </div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">ER Specialist</p>
+                ))}
+              </div>
+            ) : (
+              // Empty State
+              <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 border-dashed">
+                <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
+                  <span className="material-symbols-outlined text-slate-400 text-3xl">search_off</span>
                 </div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">No matches found</h3>
+                <p className="text-slate-500 text-sm mt-1">Try selecting a different department.</p>
               </div>
-              <div className="mb-5">
-                <div className="flex justify-between items-center mb-1.5">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-primary-blue">Match Confidence</span>
-                  <span className="text-xs font-bold text-primary-blue">92%</span>
-                </div>
-                <div className="h-2 w-full bg-purple-100 dark:bg-purple-900/30 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary-blue rounded-full w-[92%]"></div>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2 mb-6">
-                <span className="px-2.5 py-1 bg-purple-50 dark:bg-purple-900/20 text-primary-blue text-[11px] font-semibold rounded-lg flex items-center gap-1">
-                  <span className="material-symbols-rounded text-[14px]">local_shipping</span> Preferred Distance
-                </span>
-              </div>
-              <div className="flex gap-2">
-                <button className="flex-1 py-2.5 bg-primary-blue text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity">
-                  Quick Invite
-                </button>
-                <button className="px-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                  <span className="material-symbols-rounded">chat_bubble</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden opacity-80">
-            <div className="p-5">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="relative">
-                  <img alt="Staff Avatar" className="w-14 h-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvo7MuBq1akATewIDKlEB524erQwRNQF2wdKa-oACSTW72DwTO-hOFCDdrYVJAGBn3Fbnj6ikMEOCl-preiYGY0s2bJMgxCzdAHlCCvbFBtLUNkh_mr1ccTvUoWDc1UyWjcrZp8pIs9wrnseuorxu4eOVIOAKn2qjB_P60DByZbBPVZ_cMELoubUEasjo5HZUXuNS9rucB-1U7mb2uYKU1ZVxkUvevX7w9dqzNpL46SLHH9thsEyUHv5vIJfI1xjepGovZiyjmRl8" />
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-amber-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
-                </div>
-                <div className="flex-1">
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-bold text-slate-900 dark:text-white">Elena Rodriguez</h4>
-                    <span className="material-symbols-rounded text-slate-300 text-sm">more_vert</span>
-                  </div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Radiology Tech</p>
-                </div>
-              </div>
-              <div className="mb-5">
-                <div className="flex justify-between items-center mb-1.5">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-primary-blue">Match Confidence</span>
-                  <span className="text-xs font-bold text-primary-blue">85%</span>
-                </div>
-                <div className="h-2 w-full bg-purple-100 dark:bg-purple-900/30 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary-blue rounded-full w-[85%]"></div>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2 mb-6">
-                <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[11px] font-semibold rounded-lg flex items-center gap-1">
-                  <span className="material-symbols-rounded text-[14px]">timer</span> Avail. in 2h
-                </span>
-              </div>
-              <div className="flex gap-2">
-                <button className="flex-1 py-2.5 bg-primary-blue text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity">
-                  Quick Invite
-                </button>
-                <button className="px-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                  <span className="material-symbols-rounded">chat_bubble</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="p-6 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-          <button className="w-full text-center text-sm font-semibold text-slate-500 hover:text-primary-blue transition-colors">
-            View All Recommendations
-          </button>
-        </div>
-      </aside>
+            )}
+        </main>
+      </div>
     </div>
   );
 };

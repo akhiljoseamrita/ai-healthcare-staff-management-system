@@ -56,73 +56,10 @@ const HospitalDashboard = () => {
               </div>
             </div>
             
-            {/* AI Recommendations Section */}
-            <div className="mb-10">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="material-symbols-outlined text-[#135bec]">auto_awesome</span>
-                <h2 className="text-lg font-bold">AI Recommended Candidates</h2>
-                <span className="bg-[#135bec]/10 text-[#135bec] text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Priority</span>
-              </div>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Recommendation Card 1 */}
-                <div className="bg-gradient-to-br from-[#135bec]/5 to-transparent border border-[#135bec]/20 p-5 rounded-xl flex flex-col gap-4 relative overflow-hidden group">
-                  <div className="absolute -right-4 -top-4 w-20 h-20 bg-[#135bec]/10 rounded-full blur-2xl group-hover:bg-[#135bec]/20 transition-all"></div>
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-full bg-cover bg-center border-2 border-[#135bec]/20" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDnZdZzpTxVabHaI6PgEuEGWsG8DkDZ66hbPf0PcSjcFZY_9DGym_PO6UP3zlZjOAvdSPZd2KFusaUcsDMRqOQfLhnfuUTlJyte5yXJF1jSWsi12v8W45jEWynzDj3N2szXevxzxY_2SYAimpmk6SklVflpiVeuHFtYgqv46vxx7p0IfORQ8xppkW82NdyJYGBo_N9n0nSD7kcd1nvbbmJBYm9wOsG-ixbNWHV0djw3XrTeCs2GBf28S31-IhaZ57U3qK9uI3TXXNA')" }}></div>
-                    <div>
-                      <h3 className="font-bold text-slate-900 dark:text-white">Dr. Sarah Smith</h3>
-                      <p className="text-xs text-slate-500">Specialist, ER Department</p>
-                    </div>
-                    <div className="ml-auto text-[#135bec] font-bold text-sm bg-[#135bec]/10 px-2 py-1 rounded">98% Match</div>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">Ideal candidate for the upcoming ER night shift based on previous performance and proximity.</p>
-                  <button className="w-full bg-[#135bec] py-2 rounded-lg text-white text-xs font-bold hover:bg-[#135bec]/90 transition-colors cursor-pointer">Quick Hire</button>
-                </div>
-                {/* Recommendation Card 2 */}
-                <div className="bg-gradient-to-br from-[#135bec]/5 to-transparent border border-[#135bec]/20 p-5 rounded-xl flex flex-col gap-4 relative overflow-hidden group">
-                  <div className="absolute -right-4 -top-4 w-20 h-20 bg-[#135bec]/10 rounded-full blur-2xl group-hover:bg-[#135bec]/20 transition-all"></div>
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-full bg-cover bg-center border-2 border-[#135bec]/20" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDdfA4XmaA1h6cD6giF8STCfU8vAW8pNCXED-L4KHFi5lGcoiMQSEpN2sO6dwvXOVGX-LmBPqt7K2qKl7hCyQL4jLHw2Ya3Eh6kzKpb5SFe_Ruc4ZhhGJSH2p1J5QSOygSleXlf2h7zocV8v2qjdUMwVoB_elNldfmzZ_b7EGwX4bGSs_jTfF70VYWUVm2p9BsDOzUqBLUu_FnQVLzyLnZgF4Zio8MK4_LEnqs0fxvncb22UxT8NmiRBW2hx4YoTne06fnAsFDjP2s')" }}></div>
-                    <div>
-                      <h3 className="font-bold text-slate-900 dark:text-white">James Wilson</h3>
-                      <p className="text-xs text-slate-500">Senior Nurse, ICU</p>
-                    </div>
-                    <div className="ml-auto text-[#135bec] font-bold text-sm bg-[#135bec]/10 px-2 py-1 rounded">95% Match</div>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">Matches the critical staffing requirement in ICU Block B for the 08:00 shift.</p>
-                  <button className="w-full bg-[#135bec] py-2 rounded-lg text-white text-xs font-bold hover:bg-[#135bec]/90 transition-colors cursor-pointer">Quick Hire</button>
-                </div>
-                {/* Recommendation Card 3 */}
-                <div className="bg-gradient-to-br from-[#135bec]/5 to-transparent border border-[#135bec]/20 p-5 rounded-xl flex flex-col gap-4 relative overflow-hidden group">
-                  <div className="absolute -right-4 -top-4 w-20 h-20 bg-[#135bec]/10 rounded-full blur-2xl group-hover:bg-[#135bec]/20 transition-all"></div>
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-full bg-cover bg-center border-2 border-[#135bec]/20" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBPVQVjjihTW44_6vnK19E4UI3oZG0HwQgIkH3-m8NJnEWyiK1-ve0Yau9DNlo2z7Fk6WV8UD-B5Hqn8cGBc9q_PuZrRwZkft0YjW1H6khgIt2yXtus_9vqRRuDm7jTfBslI2UjRyi6Fjn93gr2h1AtGrcJST7KKiPIMiPeMCMTeWSm8nW_2LQwsJDJUwi_o7wbRa9SD-_gAVucGktIlQsw4aDpjzP9SpR2uYSNJfD-g2TwGOvrUPHWWc2OkWdWCzTAZV7YJsFj10w')" }}></div>
-                    <div>
-                      <h3 className="font-bold text-slate-900 dark:text-white">Maria Garcia</h3>
-                      <p className="text-xs text-slate-500">Cardiology Technician</p>
-                    </div>
-                    <div className="ml-auto text-[#135bec] font-bold text-sm bg-[#135bec]/10 px-2 py-1 rounded">92% Match</div>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">Highly experienced technician available for immediate rotation in Diagnostic Imaging.</p>
-                  <button className="w-full bg-[#135bec] py-2 rounded-lg text-white text-xs font-bold hover:bg-[#135bec]/90 transition-colors cursor-pointer">Quick Hire</button>
-                </div>
-              </div>
-            </div>
-            
             {/* Data Table Section */}
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
               <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <h2 className="text-lg font-bold">Current Shifts</h2>
-                <div className="flex gap-2">
-                  <button className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-1 cursor-pointer">
-                    <span className="material-symbols-outlined text-sm">filter_list</span>
-                    Filter
-                  </button>
-                  <button className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-1 cursor-pointer">
-                    <span className="material-symbols-outlined text-sm">download</span>
-                    Export
-                  </button>
-                </div>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
@@ -132,7 +69,6 @@ const HospitalDashboard = () => {
                       <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Shift Time</th>
                       <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Assigned Staff</th>
                       <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
@@ -160,9 +96,6 @@ const HospitalDashboard = () => {
                       <td className="px-6 py-4">
                         <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-600 uppercase">Filled</span>
                       </td>
-                      <td className="px-6 py-4">
-                        <button className="text-[#135bec] hover:underline text-sm font-bold cursor-pointer">Edit</button>
-                      </td>
                     </tr>
                     <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                       <td className="px-6 py-4">
@@ -186,9 +119,6 @@ const HospitalDashboard = () => {
                       <td className="px-6 py-4">
                         <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-600 uppercase">Pending</span>
                       </td>
-                      <td className="px-6 py-4">
-                        <button className="text-[#135bec] hover:underline text-sm font-bold cursor-pointer">Manage</button>
-                      </td>
                     </tr>
                     <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                       <td className="px-6 py-4">
@@ -208,9 +138,6 @@ const HospitalDashboard = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-100 text-rose-600 uppercase">Urgent</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <button className="text-[#135bec] hover:underline text-sm font-bold cursor-pointer">Assign Now</button>
                       </td>
                     </tr>
                     <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
@@ -234,9 +161,6 @@ const HospitalDashboard = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-600 uppercase">Filled</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <button className="text-[#135bec] hover:underline text-sm font-bold cursor-pointer">Edit</button>
                       </td>
                     </tr>
                   </tbody>

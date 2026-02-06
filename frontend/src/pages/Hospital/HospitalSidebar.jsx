@@ -45,13 +45,20 @@ const HospitalSidebar = ({ activePage }) => {
           </a>
 
           <a 
-            href="#" 
-            className={`${baseLinkClass} ${activePage === 'schedules' ? activeClass : inactiveClass}`}
+            href="/hospital/analytics" 
+            className={`${baseLinkClass} ${activePage === 'Recommendations' ? activeClass : inactiveClass}`}
           >
-            <span className="material-symbols-outlined text-[22px]">calendar_month</span>
-            <span className="text-sm font-medium">Schedules</span>
+            <span className="material-symbols-outlined text-[22px]">auto_awesome</span>
+            <span className="text-sm font-medium">AI Recommendations</span>
           </a>
 
+          <a 
+            href="/hospital/manage-shift" 
+            className={`${baseLinkClass} ${activePage === 'manage-shift' ? activeClass : inactiveClass}`}
+          >
+            <span className="material-symbols-outlined text-[22px]">schedule</span>
+            <span className="text-sm font-medium">Shift Management</span>
+          </a>
           <a 
             href="#" 
             className={`${baseLinkClass} ${activePage === 'settings' ? activeClass : inactiveClass}`}
