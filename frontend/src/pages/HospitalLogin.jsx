@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const HospitalLogin = () => {
   return (
@@ -55,7 +56,7 @@ const HospitalLogin = () => {
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
                   <label className="text-gray-900 dark:text-white text-sm font-medium leading-normal">Password</label>
-                  <a className="text-xs font-semibold text-primary hover:underline" href="#">Forgot Password?</a>
+                  <Link className="text-xs font-semibold text-primary hover:underline" to="/forgot-password">Forgot Password?</Link>
                 </div>
                 <div className="relative">
                   <input className="form-input flex w-full rounded-lg text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 bg-transparent focus:border-primary focus:ring-1 focus:ring-primary h-12 placeholder:text-gray-400 p-4 pr-12 text-sm font-normal" placeholder="••••••••" type="password" />
