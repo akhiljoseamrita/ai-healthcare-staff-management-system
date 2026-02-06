@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import HospitalSidebar from './HospitalSidebar'; 
 import HospitalHeader from './HospitalHeader'; 
+import StaffProfileModal from '../Staff/StaffProfileModal';
 
 const ManagerShiftManagement = () => {
   
@@ -74,6 +75,7 @@ const ManagerShiftManagement = () => {
   // --- STATE ---
   // Default to the last shift (to match screenshot example with 2/4 assigned)
   const [currentShift, setCurrentShift] = useState(shiftsData[3]);
+  const [selectedStaff, setSelectedStaff] = useState(null);
 
   return (
     <div className="bg-slate-50 dark:bg-slate-950 font-display text-slate-900 dark:text-slate-100 h-screen flex overflow-hidden">
@@ -119,7 +121,11 @@ const ManagerShiftManagement = () => {
                 <div className="p-6">
                   {currentShift.assigned.length > 0 ? (
                     currentShift.assigned.map((staff) => (
-                      <div key={staff.id} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 hover:border-[#135bec]/30 transition-all mb-3 last:mb-0">
+                      <div
+                        key={staff.id}
+                        className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 hover:border-[#135bec]/30 transition-all mb-3 last:mb-0 cursor-pointer"
+                        onClick={() => setSelectedStaff(staff)}
+                      >
                         <div className="flex items-center gap-4">
                           <div className="size-12 rounded-full bg-cover bg-center border-2 border-[#135bec]/20" style={{ backgroundImage: `url('${staff.avatar}')` }}></div>
                           <div>
@@ -159,7 +165,11 @@ const ManagerShiftManagement = () => {
 
                   {currentShift.applicants.length > 0 ? (
                     currentShift.applicants.map((applicant) => (
-                      <div key={applicant.id} className="p-6 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                      <div
+                        key={applicant.id}
+                        className="p-6 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer"
+                        onClick={() => setSelectedStaff(applicant)}
+                      >
                         <div className="flex items-center gap-4">
                           <div className="size-12 rounded-full bg-cover bg-center" style={{ backgroundImage: `url('${applicant.avatar}')` }}></div>
                           <div>
@@ -239,6 +249,17 @@ const ManagerShiftManagement = () => {
           </div>
         </main>
       </div>
+
+      {selectedStaff && (
+        <StaffProfileModal
+          staff={{
+            ...selectedStaff,
+            // Map shifts to reviews if reviews is missing
+            reviews: selectedStaff.shifts || 24,
+          }}
+          onClose={() => setSelectedStaff(null)}
+        />
+      )}
     </div>
   );
 };
