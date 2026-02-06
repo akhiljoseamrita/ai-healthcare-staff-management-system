@@ -14,6 +14,8 @@ import LandingPage from './pages/Common/LandingPage';
 import ForgotPassword from './pages/Common/ForgotPassword';
 import ResetPassword from './pages/Common/ResetPassword';
 import ResetSuccess from './pages/Common/ResetSuccess';
+import ComingSoon from './pages/Common/ComingSoon';
+import ActiveShiftSidebarV2 from './pages/Hospital/ActiveShiftSidebarV2';
 
 function App() {
   return (
@@ -35,6 +37,8 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/reset-success" element={<ResetSuccess />} />
+          <Route path="/coming-soon" element={<ComingSoon />} />
+          <Route path="/hospital/active-shifts-v2" element={<ActiveShiftSidebarV2 />} />
         </Routes>
       </div>
     </Router>
