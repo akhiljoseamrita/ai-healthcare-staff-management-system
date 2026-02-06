@@ -39,13 +39,6 @@ const StaffSidebar = ({ activePage }) => {
           </a>
 
           {/* Find Shifts (New) */}
-          <a 
-            href="/staff/shifts" 
-            className={`${baseLinkClass} ${activePage === 'find-shifts' ? activeClass : inactiveClass}`}
-          >
-            <span className="material-symbols-outlined text-[22px]">search</span>
-            <span className="text-sm font-medium">Find Shifts</span>
-          </a>
 
           {/* Earnings & History (New) */}
           <a 

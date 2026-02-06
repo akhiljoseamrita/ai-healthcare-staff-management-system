@@ -1,214 +1,180 @@
-import React from 'react';
+import React, { useState } from 'react';
+import StaffSidebar from './StaffSidebar'; // Assuming you have this from previous steps
+import StaffHeader from './StaffHeader';   // Assuming you have a header component
+
+// 2. LARGE DATASET (HOSPITALS/JOBS instead of People)
+const allHospitals = [
+  // --- ICU OPPORTUNITIES ---
+  { id: 1, name: "City General Hospital", role: "Senior ICU Nurse - Night Shift", department: "ICU", match: 99, avatar: "https://ui-avatars.com/api/?name=City+General&background=135bec&color=fff", statusColor: "bg-emerald-500", tags: [{ icon: "payments", text: "$65/hr" }, { icon: "bolt", text: "Urgent" }] },
+  { id: 2, name: "St. Mary's Medical", role: "ICU Specialist", department: "ICU", match: 97, avatar: "https://ui-avatars.com/api/?name=St+Marys&background=0f172a&color=fff", statusColor: "bg-emerald-500", tags: [{ icon: "verified", text: "Top Tier" }, { icon: "domain", text: "Teaching" }] },
+  { id: 3, name: "Royal London Health", role: "ICU Registered Nurse", department: "ICU", match: 95, avatar: "https://ui-avatars.com/api/?name=Royal+London&background=eab308&color=fff", statusColor: "bg-emerald-500", tags: [{ icon: "schedule", text: "Flexible" }] },
+  { id: 4, name: "Northside Clinic", role: "ICU Assistant", department: "ICU", match: 91, avatar: "https://ui-avatars.com/api/?name=North+Side&background=64748b&color=fff", statusColor: "bg-amber-500", tags: [{ icon: "school", text: "Mentorship" }] },
+  { id: 5, name: "Metropolitan Care", role: "Head ICU Nurse", department: "ICU", match: 89, avatar: "https://ui-avatars.com/api/?name=Metro+Care&background=135bec&color=fff", statusColor: "bg-emerald-500", tags: [{ icon: "star", text: "High Pay" }] },
+  { id: 6, name: "Hope Valley Hospital", role: "ICU Tech", department: "ICU", match: 88, avatar: "https://ui-avatars.com/api/?name=Hope+Valley&background=135bec&color=fff", statusColor: "bg-amber-500", tags: [{ icon: "timer", text: "On Call" }] },
+  { id: 7, name: "Small Town Clinic", role: "ICU Backup", department: "ICU", match: 75, avatar: "https://ui-avatars.com/api/?name=Small+Town&background=64748b&color=fff", statusColor: "bg-slate-400", tags: [{ icon: "group", text: "Casual" }] },
+
+  // --- EMERGENCY OPPORTUNITIES ---
+  { id: 8, name: "Trauma Center One", role: "ER Specialist", department: "Emergency", match: 98, avatar: "https://ui-avatars.com/api/?name=Trauma+One&background=ef4444&color=fff", statusColor: "bg-emerald-500", tags: [{ icon: "local_shipping", text: "Travel" }] },
+  { id: 9, name: "Community Health", role: "Trauma Nurse", department: "Emergency", match: 96, avatar: "https://ui-avatars.com/api/?name=Comm+Health&background=135bec&color=fff", statusColor: "bg-emerald-500", tags: [{ icon: "medical_services", text: "Benefits" }] },
+  { id: 10, name: "Westside Urgent Care", role: "ER Doctor Assistant", department: "Emergency", match: 94, avatar: "https://ui-avatars.com/api/?name=West+Side&background=f97316&color=fff", statusColor: "bg-emerald-500", tags: [{ icon: "star", text: "Bonus" }] },
+  { id: 11, name: "Prime Healthcare", role: "ER Nurse", department: "Emergency", match: 93, avatar: "https://ui-avatars.com/api/?name=Prime+Health&background=135bec&color=fff", statusColor: "bg-emerald-500", tags: [{ icon: "near_me", text: "Near You" }] },
+  { id: 12, name: "City ER Dept", role: "ER Tech", department: "Emergency", match: 90, avatar: "https://ui-avatars.com/api/?name=City+ER&background=135bec&color=fff", statusColor: "bg-amber-500", tags: [{ icon: "schedule", text: "Weekends" }] },
+  { id: 13, name: "Regional Hospital", role: "ER Support", department: "Emergency", match: 88, avatar: "https://ui-avatars.com/api/?name=Regional&background=64748b&color=fff", statusColor: "bg-amber-500", tags: [{ icon: "check", text: "Verified" }] },
+  
+  // --- RADIOLOGY OPPORTUNITIES ---
+  { id: 15, name: "Advanced Imaging Co", role: "Radiology Tech", department: "Radiology", match: 97, avatar: "https://ui-avatars.com/api/?name=Advanced+Img&background=8b5cf6&color=fff", statusColor: "bg-emerald-500", tags: [{ icon: "settings", text: "New Tech" }] },
+  { id: 16, name: "Stark Diagnostics", role: "MRI Specialist", department: "Radiology", match: 95, avatar: "https://ui-avatars.com/api/?name=Stark+Diag&background=135bec&color=fff", statusColor: "bg-emerald-500", tags: [{ icon: "science", text: "Research" }] },
+  { id: 17, name: "Banner Labs", role: "Lab Tech", department: "Radiology", match: 92, avatar: "https://ui-avatars.com/api/?name=Banner+Labs&background=10b981&color=fff", statusColor: "bg-emerald-500", tags: [{ icon: "biotech", text: "Full Time" }] },
+  { id: 18, name: "Quick Scan Center", role: "Scan Tech", department: "Radiology", match: 89, avatar: "https://ui-avatars.com/api/?name=Quick+Scan&background=f59e0b&color=fff", statusColor: "bg-amber-500", tags: [{ icon: "timer", text: "Part Time" }] },
+];
 
 const StaffAIRecommendations = () => {
+  // 1. STATE
+  const [selectedDepartment, setSelectedDepartment] = useState('All');
+  
+  const [filteredHospitals, setFilteredHospitals] = useState(() => {
+    const result = [...allHospitals].sort((a, b) => b.match - a.match);
+    return result.slice(0, 6);
+  });
+
+  // 3. LOGIC: Filter, Sort by Match, Slice Top 6
+  const handleFilterApply = () => {
+    let result = [];
+
+    // Step A: Filter by Department
+    if (selectedDepartment === 'All') {
+      result = [...allHospitals];
+    } else {
+      result = allHospitals.filter(h => h.department === selectedDepartment);
+    }
+
+    // Step B: Sort by Match Score (Highest to Lowest)
+    result.sort((a, b) => b.match - a.match);
+
+    // Step C: Take only the top 6
+    const bestSix = result.slice(0, 6);
+
+    setFilteredHospitals(bestSix);
+  };
+
   return (
-    <div className="bg-background-light dark:bg-background-dark font-display text-[#131118] dark:text-white min-h-screen">
-      <div className="flex h-screen overflow-hidden">
-        {/* Sidebar Navigation (Main) */}
-        <aside className="w-64 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-[#1c162d] flex flex-col">
-          <div className="p-6">
-            <div className="flex gap-3 mb-8">
-              <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDetw53AbEARkj9YE2-fPFH2A3N3P08l9sQYaO_ByEF5O5kP3PLjIUMac_aRdaQnRKPJH-KxnRZRzsxJwHVS4vFe7d60Zp69Xb88jZiKqsztS6H7KwZ055q7Y71bkXxKxexbhofNjt6ZeCpSOa7PmVZMc4Pa-H93fs_e7fmdDlklxrQniLERaLRKlEQVgmsSWZfAxX6oPpUOHh-Ph8Wtk4Kh3mh35UuH8aD9gnfpxVIimp8PUq933xyc26EsCWDYrkGa7cAXHtFgBg')" }}></div>
-              <div className="flex flex-col">
-                <h1 className="text-[#131118] dark:text-white text-base font-bold leading-none">StaffPortal</h1>
-                <p className="text-[#6f6189] dark:text-gray-400 text-xs font-normal">Medical Dashboard</p>
+    <div className="bg-slate-50 dark:bg-slate-950 font-display text-slate-900 dark:text-slate-100 h-screen flex overflow-hidden">
+      
+      {/* 1. Sidebar */}
+      <StaffSidebar activePage="staff-recommendations" />
+
+      {/* Main Content Wrapper */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        
+            <StaffHeader />
+
+        {/* Main Body */}
+        <main className="flex-1 overflow-y-auto p-8">
+            
+            {/* Page Header & Filter */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight">Smart Job Matches</h2>
+                <p className="text-slate-500 text-sm mt-1">
+                  Showing the <strong>Top 6 Hospitals</strong> based on your profile & preferences.
+                </p>
               </div>
-            </div>
-            <nav className="flex flex-col gap-2">
-              <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
-                <span className="material-symbols-outlined text-gray-500">grid_view</span>
-                <p className="text-sm font-medium">Dashboard</p>
-              </div>
-              <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
-                <span className="material-symbols-outlined text-gray-500">calendar_month</span>
-                <p className="text-sm font-medium">Schedule</p>
-              </div>
-              <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary-blue/10 text-primary-blue">
-                <span className="material-symbols-outlined material-symbols-fill text-primary-blue">auto_awesome</span>
-                <p className="text-sm font-medium">AI Recommendations</p>
-              </div>
-              <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
-                <span className="material-symbols-outlined text-gray-500">mail</span>
-                <p className="text-sm font-medium">Messages</p>
-              </div>
-              <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
-                <span className="material-symbols-outlined text-gray-500">person</span>
-                <p className="text-sm font-medium">Profile</p>
-              </div>
-            </nav>
-          </div>
-          <div className="mt-auto p-6 border-t border-gray-200 dark:border-gray-800">
-            <div className="flex items-center gap-3">
-              <div className="size-8 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-              <div className="flex flex-col">
-                <p className="text-xs font-bold">Dr. Sarah Smith</p>
-                <p className="text-[10px] text-gray-500 uppercase tracking-wider">RN Specialist</p>
-              </div>
-            </div>
-          </div>
-        </aside>
-        {/* Main Content Area (Dashboard Mock) */}
-        <main className="flex-1 overflow-y-auto p-8 bg-gray-50 dark:bg-background-dark">
-          <header className="flex justify-between items-center mb-8">
-            <div>
-              <h2 className="text-2xl font-bold">Good morning, Sarah</h2>
-              <p className="text-gray-500">You have 3 high-confidence shift recommendations today.</p>
-            </div>
-            <div className="flex gap-3">
-              <button className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium bg-white dark:bg-[#1c162d]">View Full Schedule</button>
-            </div>
-          </header>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white dark:bg-[#1c162d] p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 h-64">
-              <h3 className="font-bold mb-4">Upcoming Next</h3>
-              <div className="flex items-center p-4 border border-primary-blue/20 bg-primary-blue/5 rounded-lg">
-                <div className="flex-1">
-                  <p className="text-xs text-primary-blue font-bold uppercase tracking-widest mb-1">Today • 08:00 PM</p>
-                  <p className="font-bold">Saint Jude Medical Center</p>
-                  <p className="text-sm text-gray-500">Pediatric Unit • 12hr Shift</p>
+
+              {/* FILTER CONTROLS */}
+              <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">filter_alt</span>
+                  <select 
+                    value={selectedDepartment}
+                    onChange={(e) => setSelectedDepartment(e.target.value)}
+                    className="pl-10 pr-8 py-2 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-[#135bec]/20 outline-none cursor-pointer appearance-none min-w-[200px]"
+                  >
+                    <option value="All">All Specialties (Best 6)</option>
+                    <option value="ICU">Intensive Care Unit (ICU)</option>
+                    <option value="Emergency">Emergency Room</option>
+                    <option value="Radiology">Radiology</option>
+                  </select>
+                  <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xl">expand_more</span>
                 </div>
-                <span className="material-symbols-outlined text-primary-blue">chevron_right</span>
+                
+                <button 
+                  onClick={handleFilterApply}
+                  className="px-5 py-2 bg-[#135bec] text-white text-sm font-bold rounded-lg hover:bg-[#135bec]/90 transition-all shadow-md shadow-[#135bec]/20 cursor-pointer flex items-center gap-1"
+                >
+                  <span>Apply</span>
+                  <span className="material-symbols-outlined text-sm">check</span>
+                </button>
               </div>
             </div>
-            <div className="bg-white dark:bg-[#1c162d] p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 h-64">
-              <h3 className="font-bold mb-4">Performance Insights</h3>
-              <div className="flex justify-center items-center h-32">
-                <div className="text-center">
-                  <p className="text-4xl font-bold text-primary-blue">98%</p>
-                  <p className="text-xs text-gray-500 uppercase">Reliability Score</p>
+
+            {/* Smart Matches Grid */}
+            {filteredHospitals.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {filteredHospitals.map((hospital) => (
+                  <div key={hospital.id} className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 group hover:border-[#135bec]/30 transition-all hover:shadow-md animate-in fade-in zoom-in duration-300">
+                      {/* Header */}
+                      <div className="flex items-start gap-4 mb-5">
+                        <div className="relative">
+                          <img 
+                            alt="Hospital Logo" 
+                            className="w-14 h-14 rounded-lg object-cover ring-2 ring-transparent group-hover:ring-[#135bec]/20 transition-all" 
+                            src={hospital.avatar} 
+                          />
+                          <div className={`absolute -bottom-1 -right-1 w-4 h-4 ${hospital.statusColor} border-2 border-white dark:border-slate-900 rounded-full`}></div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start">
+                             <h4 className="font-bold text-lg text-slate-900 dark:text-white truncate">{hospital.name}</h4>
+                             {/* Dept Badge */}
+                             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 uppercase tracking-wide">{hospital.department}</span>
+                          </div>
+                          <p className="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">{hospital.role}</p>
+                        </div>
+                      </div>
+                      
+                      {/* Progress Bar */}
+                      <div className="mb-5">
+                        <div className="flex justify-between items-center mb-1.5">
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-[#135bec]">Job Compatibility</span>
+                          <span className="text-sm font-bold text-[#135bec]">{hospital.match}%</span>
+                        </div>
+                        <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-[#135bec] rounded-full transition-all duration-500" 
+                            style={{ width: `${hospital.match}%` }}
+                          ></div>
+                        </div>
+                      </div>
+
+                      {/* Tags */}
+                      <div className="flex flex-wrap gap-2 mb-6 min-h-[32px]">
+                        {hospital.tags.map((tag, index) => (
+                          <span key={index} className="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[11px] font-bold rounded-lg flex items-center gap-1.5">
+                            <span className="material-symbols-outlined text-[14px]">{tag.icon}</span> {tag.text}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex gap-3">
+                        <button className="flex-1 py-2.5 bg-[#135bec] text-white text-sm font-bold rounded-xl hover:bg-[#135bec]/90 transition-colors cursor-pointer shadow-lg shadow-[#135bec]/20">
+                          Quick Apply
+                        </button>
+                      </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              // Empty State
+              <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 border-dashed">
+                <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
+                  <span className="material-symbols-outlined text-slate-400 text-3xl">domain_disabled</span>
                 </div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">No jobs found</h3>
+                <p className="text-slate-500 text-sm mt-1">Try selecting a different specialty.</p>
               </div>
-            </div>
-          </div>
+            )}
         </main>
-        {/* AI Recommendation Sidebar */}
-        <aside className="w-96 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-[#1c162d] flex flex-col h-full">
-          <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary-blue material-symbols-fill">auto_awesome</span>
-              <h2 className="text-lg font-bold">Top Shifts for You</h2>
-            </div>
-            <button className="text-gray-400 hover:text-gray-600 transition-colors">
-              <span className="material-symbols-outlined text-sm">settings</span>
-            </button>
-          </div>
-          <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-6">
-            {/* Recommendation Card 1 */}
-            <div className="flex flex-col bg-white dark:bg-[#241d3b] rounded-xl border border-gray-100 dark:border-gray-700 shadow-md hover:shadow-lg transition-shadow overflow-hidden group">
-              <div className="relative">
-                <div className="w-full h-32 bg-center bg-no-repeat bg-cover" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDvFDKQbgrmmGinmy4a4o86QW74hMYVaFQp6sUOUnbvvWtL0syOB8kKMo6MU0SjHtOldh0xtDMq61e3pVCk2fI5a4ZOVxY5f8oEJiX6pVGOagiOAECdGhspT51C1Qe2K1eYjeZZ0JNQ7Kug3vCOZAItlc4LxzBI4VHYSfKPtgzBSPHSnj9DLwyA4sLM69nhn1i_ziLjLC5pyAjoN9g4CKib0HSRltmNSz3m7brnWWMbjFNaemSeJJdHrG-MlUu5v50z2n2nApqTQuI')" }}></div>
-                <div className="absolute top-3 right-3">
-                  <div className="relative inline-block">
-                    <button className="size-8 bg-white/90 dark:bg-black/50 backdrop-blur rounded-full flex items-center justify-center text-gray-600 dark:text-white shadow-sm hover:bg-white transition-colors">
-                      <span className="material-symbols-outlined text-base">more_vert</span>
-                    </button>
-                    {/* Tooltip mockup for feedback */}
-                    <div className="hidden group-hover:block absolute top-10 right-0 w-48 bg-white dark:bg-gray-800 shadow-xl rounded-lg border border-gray-200 dark:border-gray-700 z-10 py-2">
-                      <button className="w-full text-left px-4 py-2 text-xs hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2">
-                        <span className="material-symbols-outlined text-xs">location_off</span> Location too far
-                      </button>
-                      <button className="w-full text-left px-4 py-2 text-xs hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 text-red-500">
-                        <span className="material-symbols-outlined text-xs">block</span> Not interested
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="p-4 flex flex-col gap-3">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-bold text-sm leading-tight">City General Hospital</h3>
-                    <p className="text-xs text-gray-500">Emergency Room • Night Shift</p>
-                  </div>
-                </div>
-                {/* Progress Bar Component */}
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-bold text-primary-blue uppercase tracking-wider">Match Confidence</span>
-                    <span className="text-[10px] font-bold">95%</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary-blue rounded-full" style={{ width: "95%" }}></div>
-                  </div>
-                </div>
-                {/* Reasoning Chip */}
-                <div className="flex items-center gap-2 py-1.5 px-2 bg-[#f2f0f4] dark:bg-white/5 rounded-lg">
-                  <span className="material-symbols-outlined text-primary-blue text-sm">calendar_today</span>
-                  <span className="text-xs font-medium text-[#131118] dark:text-gray-300">Fits your Monday schedule</span>
-                </div>
-                <div className="flex gap-2 mt-2">
-                  <button className="flex-1 bg-primary-blue text-white text-xs font-bold py-2.5 rounded-lg hover:brightness-110 transition-all">Apply Now</button>
-                  <button className="px-3 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <span className="material-symbols-outlined text-base py-1">bookmark</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            {/* Recommendation Card 2 */}
-            <div className="flex flex-col bg-white dark:bg-[#241d3b] rounded-xl border border-gray-100 dark:border-gray-700 shadow-md hover:shadow-lg transition-shadow overflow-hidden">
-              <div className="w-full h-32 bg-center bg-no-repeat bg-cover" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBFGhS3QVcCZ2HQjjiGE0eiSCurAjSYrdQou5jSpy5hNfv9xYoxVyyxr_Uc4A6S37PJlAmAOYGKQuhQg8Euuow9K3yQZDCP7o2DDxLjq8drv_mTNHIaGho5W39puzVPF1HVlMLjJLTVqhvWsuwUYyt62rzxzJ9Olg3uKMRqM3jzv1qSZbo8e-j1v4zXvXAS4PvFo7L4HmJlt4uuqmKjMhPQnIACIMias4_TZOKEJjsl3Lgk52v58T7KQtqaiJD3AfFRqdC6pJDcI7c')" }}></div>
-              <div className="p-4 flex flex-col gap-3">
-                <div>
-                  <h3 className="font-bold text-sm leading-tight">Westside Medical Clinic</h3>
-                  <p className="text-xs text-gray-500">Outpatient Care • Morning</p>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-bold text-primary-blue uppercase tracking-wider">Match Confidence</span>
-                    <span className="text-[10px] font-bold">89%</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary-blue/70 rounded-full" style={{ width: "89%" }}></div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 py-1.5 px-2 bg-[#f2f0f4] dark:bg-white/5 rounded-lg">
-                  <span className="material-symbols-outlined text-primary-blue text-sm">near_me</span>
-                  <span className="text-xs font-medium text-[#131118] dark:text-gray-300">Preferred location (under 5 miles)</span>
-                </div>
-                <div className="flex gap-2 mt-2">
-                  <button className="flex-1 bg-primary-blue text-white text-xs font-bold py-2.5 rounded-lg hover:brightness-110 transition-all">Apply Now</button>
-                  <button className="px-3 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 rounded-lg">
-                    <span className="material-symbols-outlined text-base py-1">bookmark</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            {/* Recommendation Card 3 */}
-            <div className="flex flex-col bg-white dark:bg-[#241d3b] rounded-xl border border-gray-100 dark:border-gray-700 shadow-md hover:shadow-lg transition-shadow overflow-hidden">
-              <div className="w-full h-32 bg-center bg-no-repeat bg-cover" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDFOYlfAM7ldlLuBg7mVJt75Ga-2HbOpyb8tJgQs0UBg7iCENBSZrFDffWYpin5X18AfIoVOSdS9CG_RTq_y-1kGhwaEx5xqRJkmaS6ofNbBblozxacvoZ-DPWt7RrZfeK93MdQDQncf5G2nF2aQWgQe1w3KWmcKAJn-gbGofYY_lz_rDv8rR1lh5ctS-TCgII1aSPpWoixLGQMRlSrEeKqbOqFoiXQlaiaawkDdQaY66kVv_S128L1u_c2nRuLNwkDga2CrWKnfYU')" }}></div>
-              <div className="p-4 flex flex-col gap-3">
-                <div>
-                  <h3 className="font-bold text-sm leading-tight">HealthFirst Specialist Center</h3>
-                  <p className="text-xs text-gray-500">Surgical Wing • Weekend Shift</p>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-bold text-primary-blue uppercase tracking-wider">Match Confidence</span>
-                    <span className="text-[10px] font-bold">82%</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary-blue/50 rounded-full" style={{ width: "82%" }}></div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 py-1.5 px-2 bg-[#f2f0f4] dark:bg-white/5 rounded-lg">
-                  <span className="material-symbols-outlined text-primary-blue text-sm">favorite</span>
-                  <span className="text-xs font-medium text-[#131118] dark:text-gray-300">High culture-fit rating</span>
-                </div>
-                <div className="flex gap-2 mt-2">
-                  <button className="flex-1 bg-primary-blue text-white text-xs font-bold py-2.5 rounded-lg hover:brightness-110 transition-all">Apply Now</button>
-                  <button className="px-3 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 rounded-lg">
-                    <span className="material-symbols-outlined text-base py-1">bookmark</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="p-6 bg-gray-50 dark:bg-[#131118] border-t border-gray-200 dark:border-gray-800">
-            <button className="w-full text-center py-2 text-sm text-[#6f6189] hover:text-primary-blue font-medium transition-colors">
-              Already contacted a hospital?
-            </button>
-          </div>
-        </aside>
       </div>
     </div>
   );

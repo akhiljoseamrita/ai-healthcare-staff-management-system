@@ -10,13 +10,11 @@ import HospitalLogin from './pages/Hospital/HospitalLogin';
 import HospitalAnalytics from './pages/Hospital/HospitalAnalytics';
 import ManagerShiftManagement from './pages/Hospital/ManagerShiftManagement';
 import StaffAuth from './pages/Staff/StaffAuth';
-import StaffSidebar from './pages/Staff/StaffSidebar';
 import LandingPage from './pages/Common/LandingPage';
 import ForgotPassword from './pages/Common/ForgotPassword';
 import ResetPassword from './pages/Common/ResetPassword';
 import ResetSuccess from './pages/Common/ResetSuccess';
 import ComingSoon from './pages/Common/ComingSoon';
-import StaffShift from './pages/Staff/StaffShifts';
 
 function App() {
   return (
@@ -34,7 +32,6 @@ function App() {
           <Route path="/staff/shift-details" element={<StaffShiftDetails />} />
           <Route path="/staff/recommendations" element={<StaffAIRecommendations />} />
           <Route path="/staff/auth" element={<StaffAuth />} />
-           <Route path="/staff/shifts" element={<StaffShift />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />

@@ -16,17 +16,6 @@ const StaffDashboard = () => {
             <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
               <div>
                 <h1 className="text-3xl font-bold tracking-tight">Good Morning, Dr. Alex.</h1>
-                <p className="text-slate-500 dark:text-slate-400 mt-1">Thursday, October 24th • You have a shift starting in <span className="text-primary font-semibold">2 hours</span>.</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <button className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                  <span className="material-symbols-outlined text-lg">calendar_today</span>
-                  Calendar
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm">
-                  <span className="material-symbols-outlined text-lg">add</span>
-                  Find Shifts
-                </button>
               </div>
             </header>
 
@@ -74,7 +63,7 @@ const StaffDashboard = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
               {/* Income Goal */}
-              <div className="md:col-span-3 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
+              <div className="md:col-span-4 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
                 <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-6">Income Goal</h3>
                 <div className="flex flex-col items-center py-4">
                   <div className="relative w-40 h-40 flex items-center justify-center">
@@ -95,7 +84,7 @@ const StaffDashboard = () => {
               </div>
 
               {/* Weekly Performance */}
-              <div className="md:col-span-6 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm flex flex-col">
+              <div className="md:col-span-8 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm flex flex-col">
                 <div className="flex items-center justify-between mb-8">
                   <div>
                     <h3 className="font-bold text-slate-800 dark:text-slate-100">Weekly Performance</h3>
@@ -127,51 +116,58 @@ const StaffDashboard = () => {
               </div>
 
               {/* Up Next */}
-              <div className="md:col-span-3 flex flex-col gap-4">
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm border-l-4 border-l-primary flex-1">
-                  <div className="flex flex-col h-full">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                        <span className="material-symbols-outlined">medical_services</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-primary font-bold uppercase tracking-wider">Up Next</span>
-                        <h4 className="font-bold text-sm">St. Mary's Hospital</h4>
-                      </div>
-                    </div>
-                    <div className="space-y-4 mb-6">
-                      <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
-                        <span className="material-symbols-outlined text-sm">schedule</span>
-                        08:00 AM - 04:00 PM
-                      </div>
-                      <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
-                        <span className="material-symbols-outlined text-sm">location_on</span>
-                        San Francisco, CA
-                      </div>
-                      <div className="flex items-center gap-3 text-sm text-emerald-600 font-semibold">
-                        <span className="material-symbols-outlined text-sm">payments</span>
-                        $85.00/hr
-                      </div>
-                    </div>
-                    <div className="mt-auto space-y-2">
-                      <button className="w-full py-2.5 bg-primary text-white rounded-lg font-bold hover:opacity-90 transition-opacity">
-                        Clock In
-                      </button>
-                      <button className="w-full py-2.5 bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-200 rounded-lg font-semibold text-sm hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors">
-                        Details
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Recent Activity */}
+            {/* Recent Activity with Monthly Stats Feature */}
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
+
+              {/* Header */}
               <div className="p-6 border-b border-slate-50 dark:border-slate-700 flex justify-between items-center">
-                <h3 className="font-bold text-slate-800 dark:text-slate-100">Recent Activity</h3>
-                <button className="text-xs font-bold text-primary uppercase tracking-widest hover:underline">View All Activity</button>
+                <div>
+                  <h3 className="font-bold text-slate-800 dark:text-slate-100">Recent Activity</h3>
+                  <p className="text-xs text-slate-400 mt-1">Updates from your applications</p>
+                </div>
+                <button className="text-xs font-bold text-primary uppercase tracking-widest hover:underline">
+                  View All
+                </button>
               </div>
+
+              {/* NEW FEATURE: Last Month Summary Stats */}
+              <div className="grid grid-cols-3 divide-x divide-slate-50 dark:divide-slate-700 border-b border-slate-50 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
+
+                {/* Accepted Stats */}
+                <div className="p-4 flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-colors">
+                  <div className="text-2xl font-bold text-slate-700 dark:text-slate-200">14</div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[14px]">check_circle</span>
+                    Accepted
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-1">Last Month</p>
+                </div>
+
+                {/* Pending Stats */}
+                <div className="p-4 flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-amber-50/50 dark:hover:bg-amber-900/10 transition-colors">
+                  <div className="text-2xl font-bold text-slate-700 dark:text-slate-200">08</div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 mt-1 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[14px]">hourglass_top</span>
+                    Pending
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-1">Last Month</p>
+                </div>
+
+                {/* Rejected Stats */}
+                <div className="p-4 flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-rose-50/50 dark:hover:bg-rose-900/10 transition-colors">
+                  <div className="text-2xl font-bold text-slate-700 dark:text-slate-200">03</div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 mt-1 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[14px]">cancel</span>
+                    Rejected
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-1">Last Month</p>
+                </div>
+              </div>
+
+              {/* Existing List */}
               <div className="divide-y divide-slate-50 dark:divide-slate-700">
                 {[
                   {
@@ -208,14 +204,14 @@ const StaffDashboard = () => {
                     tagText: 'text-amber-600 dark:text-amber-400'
                   }
                 ].map((activity, idx) => (
-                  <div key={idx} className="p-6 flex items-start justify-between gap-4 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
+                  <div key={idx} className="p-6 flex items-start justify-between gap-4 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors cursor-pointer">
                     <div className="flex items-start gap-4">
                       <div className={`p-2 ${activity.iconBg} ${activity.iconText} rounded-full`}>
                         <span className="material-symbols-outlined text-sm">{activity.icon}</span>
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="text-sm font-bold">{activity.title}</h4>
+                          <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200">{activity.title}</h4>
                           <span className={`px-2 py-0.5 rounded-full ${activity.tagBg} ${activity.tagText} text-[10px] font-bold uppercase`}>
                             {activity.status}
                           </span>
@@ -223,20 +219,11 @@ const StaffDashboard = () => {
                         <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{activity.hospital}</p>
                       </div>
                     </div>
-                    <span className="text-xs text-slate-400 font-medium">{activity.time}</span>
+                    <span className="text-xs text-slate-400 font-medium whitespace-nowrap">{activity.time}</span>
                   </div>
                 ))}
               </div>
             </div>
-
-            <footer className="mt-12 py-8 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center text-[10px] text-slate-400 font-medium uppercase tracking-widest gap-4">
-              <div>© 2024 StaffPortal Healthcare. All rights reserved.</div>
-              <div className="flex items-center gap-6">
-                <a className="hover:text-primary transition-colors" href="#">Privacy Policy</a>
-                <a className="hover:text-primary transition-colors" href="#">Terms of Service</a>
-                <a className="hover:text-primary transition-colors" href="#">Support Center</a>
-              </div>
-            </footer>
           </div>
         </main>
       </div>

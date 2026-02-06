@@ -65,7 +65,7 @@ const LandingPage = () => {
 
       <footer className="mt-auto py-8 border-t border-solid border-[#000]/10 dark:border-white/10 bg-white dark:bg-[#231830]">
         <div className="max-w-[960px] mx-auto px-10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-[#000] dark:text-[#8aaef7] text-sm">© 2026 Staff Portal. All rights reserved.</p>
+          <p className="text-[#000] dark:text-[#8aaef7] text-sm">© 2026 Health Management System. All rights reserved.</p>
           <div className="flex gap-6">
             <a className="text-[#000] dark:text-[#8aaef7] text-sm hover:opacity-80 transition-opacity" href="#">Privacy Policy</a>
             <a className="text-[#000] dark:text-[#8aaef7] text-sm hover:opacity-80 transition-opacity" href="#">Terms of Service</a>
