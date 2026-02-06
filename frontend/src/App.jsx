@@ -11,6 +11,9 @@ import HospitalAnalytics from './pages/Hospital/HospitalAnalytics';
 import ManagerShiftManagement from './pages/ManagerShiftManagement';
 import StaffAuth from './pages/StaffAuth';
 import LandingPage from './pages/LandingPage';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import ResetSuccess from './pages/ResetSuccess';
 
 function App() {
   return (
@@ -28,6 +31,9 @@ function App() {
           <Route path="/staff/shift-details" element={<StaffShiftDetails />} />
           <Route path="/staff/recommendations" element={<StaffAIRecommendations />} />
           <Route path="/staff/auth" element={<StaffAuth />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/reset-success" element={<ResetSuccess />} />
         </Routes>
       </div>
     </Router>
