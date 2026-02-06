@@ -60,7 +60,7 @@ const HospitalSidebar = ({ activePage }) => {
             <span className="text-sm font-medium">Shift Management</span>
           </a>
           <a 
-            href="#" 
+            href="/coming-soon" 
             className={`${baseLinkClass} ${activePage === 'settings' ? activeClass : inactiveClass}`}
           >
             <span className="material-symbols-outlined text-[22px]">settings</span>
