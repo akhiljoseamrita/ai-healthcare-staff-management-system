@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
+import StaffProfileModal from './StaffProfileModal';
 
 const StaffDashboard = () => {
+  const [showProfile, setShowProfile] = useState(false);
+
   return (
     <div className="bg-background-light dark:bg-background-dark text-[#111318] dark:text-white min-h-screen font-public-sans">
       <div className="flex h-screen overflow-hidden">
@@ -28,7 +31,10 @@ const StaffDashboard = () => {
                 <span className="material-symbols-outlined">assignment_turned_in</span>
                 <p className="text-sm font-medium">My Applications</p>
               </div>
-              <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 cursor-pointer">
+              <div
+                onClick={() => setShowProfile(true)}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 cursor-pointer"
+              >
                 <span className="material-symbols-outlined">person</span>
                 <p className="text-sm font-medium">Profile</p>
               </div>
@@ -311,6 +317,24 @@ const StaffDashboard = () => {
           </div>
         </main>
       </div>
+
+      {showProfile && (
+        <StaffProfileModal
+          staff={{
+            name: "Sarah Jenkins",
+            role: "ICU Nurse • Registered Professional",
+            status: "Available Today",
+            age: "32 Years",
+            location: "London, UK",
+            country: "United Kingdom",
+            experience: "8 Years",
+            rating: 4.8,
+            reviews: 24,
+            avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuAZmGZqh14YOtO8XbxS5zDjT3F-6f4Px0IcMARwTFBhQ55ER0XK69-zy2mfnx3A6a4fQfDrCNul77UP7cxLeSiHjnWL0Rd0TkpgR9G7jLgRxL_40lXty7V3Op8xdr22Mrgd-l2BpzIW_Z6XcjcHn3w7beKy0-Zl2CmoxDYa1AxSVVuoxundsLJl4-DSAKAQgUR874S_ttb-3kt999pEd82fJtsKyqReOdpOYwzet3xms3E19h4nNwY8adDq8PNWjFwIWT-YUH0RuCo"
+          }}
+          onClose={() => setShowProfile(false)}
+        />
+      )}
     </div>
   );
 };
