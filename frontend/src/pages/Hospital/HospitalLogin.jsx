@@ -109,7 +109,7 @@ const HospitalLogin = () => {
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
                   <label className="text-gray-900 dark:text-white text-sm font-medium leading-normal">Password</label>
-                  <a className="text-xs font-semibold text-[#135bec] hover:underline" href="#">Forgot Password?</a>
+                  <a className="text-xs font-semibold text-[#135bec] hover:underline" href="/forgot-password">Forgot Password?</a>
                 </div>
                 <div className="relative">
                   <input 

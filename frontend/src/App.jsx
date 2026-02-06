@@ -3,17 +3,17 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import HospitalDashboard from './pages/Hospital/HospitalDashboard';
 import HospitalRegistration from './pages/Hospital/HospitalRegistration';
 import PostNewShift from './pages/Hospital/PostNewShift';
-import StaffDashboard from './pages/StaffDashboard';
-import StaffShiftDetails from './pages/StaffShiftDetails';
-import StaffAIRecommendations from './pages/StaffAIRecommendations';
+import StaffDashboard from './pages/Staff/StaffDashboard';
+import StaffShiftDetails from './pages/Staff/StaffShiftDetails';
+import StaffAIRecommendations from './pages/Staff/StaffAIRecommendations';
 import HospitalLogin from './pages/Hospital/HospitalLogin';
 import HospitalAnalytics from './pages/Hospital/HospitalAnalytics';
-import ManagerShiftManagement from './pages/ManagerShiftManagement';
-import StaffAuth from './pages/StaffAuth';
-import LandingPage from './pages/LandingPage';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import ResetSuccess from './pages/ResetSuccess';
+import ManagerShiftManagement from './pages/Hospital/ManagerShiftManagement';
+import StaffAuth from './pages/Staff/StaffAuth';
+import LandingPage from './pages/Common/LandingPage';
+import ForgotPassword from './pages/Common/ForgotPassword';
+import ResetPassword from './pages/Common/ResetPassword';
+import ResetSuccess from './pages/Common/ResetSuccess';
 
 function App() {
   return (
@@ -31,6 +31,7 @@ function App() {
           <Route path="/staff/shift-details" element={<StaffShiftDetails />} />
           <Route path="/staff/recommendations" element={<StaffAIRecommendations />} />
           <Route path="/staff/auth" element={<StaffAuth />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/reset-success" element={<ResetSuccess />} />

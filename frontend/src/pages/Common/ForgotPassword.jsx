@@ -6,11 +6,11 @@ const ForgotPassword = () => {
     <div className="bg-background-light dark:bg-background-dark min-h-screen flex flex-col font-display">
       {/* Top Navigation Bar */}
       <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#e9e7f3] dark:border-gray-800 px-6 md:px-10 py-4 bg-white dark:bg-gray-900">
-        <div className="flex items-center gap-4 text-brand-dark dark:text-white">
-          <div className="size-6 text-primary">
+     <div className="flex items-center gap-1">
+          <div className="text-[#135bec] flex items-center justify-center">
             <span className="material-symbols-outlined text-3xl">medical_services</span>
           </div>
-          <h2 className="text-brand-dark dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Healthcare Staff Management</h2>
+          <h2 className="text-[#135bec] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Healthcare</h2>
         </div>
       </header>
       <main className="flex-1 flex items-center justify-center p-6">
