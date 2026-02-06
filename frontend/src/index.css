@@ -27,3 +27,38 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #374151;
+}
+
+/* Shift card animations */
+.shift-card:hover .view-button {
+    opacity: 1;
+    transform: translateX(0);
+}
+.view-button {
+    opacity: 0;
+    transform: translateX(4px);
+    transition: all 0.2s ease-in-out;
+}
+
+/* No scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
