@@ -9,85 +9,143 @@ const StaffDashboard = () => {
     <div className="bg-background-light dark:bg-background-dark text-[#111318] dark:text-white min-h-screen font-public-sans">
       <div className="flex h-screen overflow-hidden">
 
-        <Staff activePage="dashboard" />
+        <Staff activePage="find-shifts" />
 
         <main className="flex-1 flex flex-col overflow-y-auto">
           {/* Top Header */}
           <StaffHeader />
           <div className="p-8 pb-32">
-            {/* Suggested Ribbon */}
-            <section className="mb-10">
-              <div className="flex items-center justify-between mb-4 px-1">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary-blue">auto_awesome</span>
-                  <h2 className="text-lg font-bold">Suggested for You</h2>
-                </div>
-                <button className="text-primary-blue text-sm font-semibold hover:underline">View all matches</button>
-              </div>
-              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-                <div className="flex-shrink-0 w-80 bg-white dark:bg-slate-900 rounded-xl border border-primary-blue/20 shadow-sm p-5 flex flex-col gap-4">
-                  <div className="flex justify-between items-start">
-                    <div className="size-12 rounded-lg bg-gray-50 dark:bg-slate-800 p-2 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-primary-blue text-3xl">local_hospital</span>
-                    </div>
-                    <span className="bg-primary-blue/10 text-primary-blue text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">High Match</span>
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg">ICU Night Shift</h3>
-                    <p className="text-gray-500 text-sm">St. Jude Medical Center</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-primary-blue font-bold text-xl">
-                    $95.00 <span className="text-xs font-normal text-gray-400">/ hr</span>
-                  </div>
-                  <button className="w-full py-2.5 bg-primary-blue text-white font-bold rounded-lg hover:opacity-90 transition-opacity">Apply Now</button>
-                </div>
-                <div className="flex-shrink-0 w-80 bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm p-5 flex flex-col gap-4">
-                  <div className="flex justify-between items-start">
-                    <div className="size-12 rounded-lg bg-gray-50 dark:bg-slate-800 p-2 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-emerald-500 text-3xl">emergency</span>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg">ER Trauma Unit</h3>
-                    <p className="text-gray-500 text-sm">Metro General Hospital</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-primary-blue font-bold text-xl">
-                    $110.00 <span className="text-xs font-normal text-gray-400">/ hr</span>
-                  </div>
-                  <button className="w-full py-2.5 bg-primary-blue text-white font-bold rounded-lg hover:opacity-90 transition-opacity">Apply Now</button>
-                </div>
-                <div className="flex-shrink-0 w-80 bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm p-5 flex flex-col gap-4">
-                  <div className="flex justify-between items-start">
-                    <div className="size-12 rounded-lg bg-gray-50 dark:bg-slate-800 p-2 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-orange-400 text-3xl">child_care</span>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg">Pediatric Care</h3>
-                    <p className="text-gray-500 text-sm">Mercy Children's</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-primary-blue font-bold text-xl">
-                    $88.00 <span className="text-xs font-normal text-gray-400">/ hr</span>
-                  </div>
-                  <button className="w-full py-2.5 bg-primary-blue text-white font-bold rounded-lg hover:opacity-90 transition-opacity">Apply Now</button>
-                </div>
-              </div>
-            </section>
+
             {/* Discovery Grid */}
             <section>
               <div className="flex items-center justify-between mb-6 px-1">
                 <h2 className="text-lg font-bold">Recommended Discoveries</h2>
-                <div className="flex gap-2">
-                  <button className="p-2 border border-gray-200 dark:border-slate-800 rounded-lg hover:bg-white dark:hover:bg-slate-800">
-                    <span className="material-symbols-outlined text-sm">filter_list</span>
-                  </button>
-                  <button className="p-2 border border-gray-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-800">
-                    <span className="material-symbols-outlined text-sm">grid_view</span>
-                  </button>
-                </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {/* Card 1 */}
+                <div className="group bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-gray-100 dark:border-slate-800 hover:shadow-xl hover:border-primary-blue/30 transition-all">
+                  <div className="h-32 bg-slate-100 dark:bg-slate-800 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent"></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-gray-200 dark:text-slate-700 text-7xl select-none">domain</span>
+                    </div>
+                    <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-white/90 dark:bg-slate-900/90 px-2 py-0.5 rounded text-[10px] font-bold">
+                      <span className="material-symbols-outlined text-yellow-400 text-xs fill">star</span>
+                      <span>4.8</span>
+                    </div>
+                  </div>
+                  <div className="p-5 flex flex-col gap-4">
+                    <div>
+                      <h4 className="font-bold text-base leading-tight group-hover:text-primary-blue transition-colors">Surgical Nurse - Afternoon</h4>
+                      <p className="text-gray-500 text-xs mt-1">Presbyterian Hospital • Oncology</p>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                        <span className="material-symbols-outlined text-sm">event</span>
+                        <span>Thu, Oct 17 • 14:00 - 22:00</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                        <span className="material-symbols-outlined text-sm">payments</span>
+                        <span className="font-bold text-primary-blue text-sm">$92.00/hr</span>
+                      </div>
+                    </div>
+                    <button className="w-full py-2 bg-gray-50 dark:bg-slate-800 text-primary-blue font-bold text-sm rounded-lg hover:bg-primary-blue hover:text-white transition-all">Apply Now</button>
+                  </div>
+                </div>
+                {/* Card 2 (Already Applied State) */}
+                <div className="bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-gray-100 dark:border-slate-800 shadow-sm opacity-90">
+                  <div className="h-32 bg-slate-100 dark:bg-slate-800 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent"></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-gray-200 dark:text-slate-700 text-7xl select-none">home_health</span>
+                    </div>
+                    <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-white/90 dark:bg-slate-900/90 px-2 py-0.5 rounded text-[10px] font-bold">
+                      <span className="material-symbols-outlined text-yellow-400 text-xs fill">star</span>
+                      <span>4.5</span>
+                    </div>
+                  </div>
+                  <div className="p-5 flex flex-col gap-4">
+                    <div>
+                      <h4 className="font-bold text-base leading-tight">Home Care Visit - PT</h4>
+                      <p className="text-gray-500 text-xs mt-1">City Health Alliance • Rehabilitation</p>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                        <span className="material-symbols-outlined text-sm">event</span>
+                        <span>Fri, Oct 18 • 09:00 - 17:00</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                        <span className="material-symbols-outlined text-sm">payments</span>
+                        <span className="font-bold text-primary-blue text-sm">$75.00/hr</span>
+                      </div>
+                    </div>
+                    <button className="w-full py-2 bg-gray-100 dark:bg-slate-800 text-gray-400 font-bold text-sm rounded-lg cursor-not-allowed flex items-center justify-center gap-2" disabled>
+                      <span className="material-symbols-outlined text-sm">check_circle</span>
+                      Applied
+                    </button>
+                  </div>
+                </div>
+                {/* Card 3 */}
+                <div className="group bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-gray-100 dark:border-slate-800 hover:shadow-xl transition-all">
+                  <div className="h-32 bg-slate-100 dark:bg-slate-800 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent"></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-gray-200 dark:text-slate-700 text-7xl select-none">emergency</span>
+                    </div>
+                    <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-white/90 dark:bg-slate-900/90 px-2 py-0.5 rounded text-[10px] font-bold">
+                      <span className="material-symbols-outlined text-yellow-400 text-xs fill">star</span>
+                      <span>4.9</span>
+                    </div>
+                  </div>
+                  <div className="p-5 flex flex-col gap-4">
+                    <div>
+                      <h4 className="font-bold text-base leading-tight group-hover:text-primary-blue transition-colors">Triage Specialist - ER</h4>
+                      <p className="text-gray-500 text-xs mt-1">Valley Health System • Emergency</p>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                        <span className="material-symbols-outlined text-sm">event</span>
+                        <span>Sat, Oct 19 • 20:00 - 06:00</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                        <span className="material-symbols-outlined text-sm">payments</span>
+                        <span className="font-bold text-primary-blue text-sm">$120.00/hr</span>
+                      </div>
+                    </div>
+                    <button className="w-full py-2 bg-gray-50 dark:bg-slate-800 text-primary-blue font-bold text-sm rounded-lg hover:bg-primary-blue hover:text-white transition-all">Apply Now</button>
+                  </div>
+                </div>
+                {/* Card 4 */}
+                <div className="group bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-gray-100 dark:border-slate-800 hover:shadow-xl transition-all">
+                  <div className="h-32 bg-slate-100 dark:bg-slate-800 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent"></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-gray-200 dark:text-slate-700 text-7xl select-none">medication_liquid</span>
+                    </div>
+                    <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-white/90 dark:bg-slate-900/90 px-2 py-0.5 rounded text-[10px] font-bold">
+                      <span className="material-symbols-outlined text-yellow-400 text-xs fill">star</span>
+                      <span>4.2</span>
+                    </div>
+                  </div>
+                  <div className="p-5 flex flex-col gap-4">
+                    <div>
+                      <h4 className="font-bold text-base leading-tight group-hover:text-primary-blue transition-colors">Pharmacy Support - Floater</h4>
+                      <p className="text-gray-500 text-xs mt-1">Walgreens Community Clinic</p>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                        <span className="material-symbols-outlined text-sm">event</span>
+                        <span>Mon, Oct 21 • 08:00 - 16:00</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                        <span className="material-symbols-outlined text-sm">payments</span>
+                        <span className="font-bold text-primary-blue text-sm">$68.00/hr</span>
+                      </div>
+                    </div>
+                    <button className="w-full py-2 bg-gray-50 dark:bg-slate-800 text-primary-blue font-bold text-sm rounded-lg hover:bg-primary-blue hover:text-white transition-all">Apply Now</button>
+                  </div>
+                </div>
+                  {/* Card 1 */}
                 <div className="group bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-gray-100 dark:border-slate-800 hover:shadow-xl hover:border-primary-blue/30 transition-all">
                   <div className="h-32 bg-slate-100 dark:bg-slate-800 relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent"></div>

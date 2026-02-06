@@ -1,11 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const HospitalSidebar = ({ activePage }) => {
+const StaffSidebar = ({ activePage }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    navigate('/hospital/login');
+    // Redirect to staff login page
+    navigate('/staff/auth');
   };
 
   // Helper classes for active/inactive links
@@ -26,33 +27,45 @@ const HospitalSidebar = ({ activePage }) => {
           </div>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation - STAFF SPECIFIC ITEMS */}
         <nav className="flex flex-col gap-1 flex-1">
+          {/* Dashboard */}
           <a 
-            href="/hospital/dashboard" 
+            href="/staff/dashboard" 
             className={`${baseLinkClass} ${activePage === 'dashboard' ? activeClass : inactiveClass}`}
           >
             <span className="material-symbols-outlined text-[22px]">dashboard</span>
             <span className="text-sm font-medium">Dashboard</span>
           </a>
 
+          {/* Find Shifts (New) */}
           <a 
-            href="/hospital/post-shift" 
-            className={`${baseLinkClass} ${activePage === 'staffing' ? activeClass : inactiveClass}`}
+            href="/staff/shifts" 
+            className={`${baseLinkClass} ${activePage === 'find-shifts' ? activeClass : inactiveClass}`}
           >
-            <span className="material-symbols-outlined text-[22px]">groups</span>
-            <span className="text-sm font-medium">Staffing</span>
+            <span className="material-symbols-outlined text-[22px]">search</span>
+            <span className="text-sm font-medium">Find Shifts</span>
           </a>
 
-        
-
+          {/* Earnings & History (New) */}
           <a 
-            href="/hospital/manage-shift" 
-            className={`${baseLinkClass} ${activePage === 'manage-shift' ? activeClass : inactiveClass}`}
+            href="/staff/recommendations" 
+            className={`${baseLinkClass} ${activePage === 'staff-recommendations' ? activeClass : inactiveClass}`}
+          >
+            <span className="material-symbols-outlined text-[22px]">auto_awesome</span>
+            <span className="text-sm font-medium">AI Recommendations</span>
+          </a>
+
+          {/* My Profile (New) */}
+          <a 
+            href="/staff/shift-details" 
+            className={`${baseLinkClass} ${activePage === 'shift-details' ? activeClass : inactiveClass}`}
           >
             <span className="material-symbols-outlined text-[22px]">schedule</span>
             <span className="text-sm font-medium">Shift Management</span>
           </a>
+
+          {/* Settings */}
           <a 
             href="/coming-soon" 
             className={`${baseLinkClass} ${activePage === 'settings' ? activeClass : inactiveClass}`}
@@ -66,7 +79,7 @@ const HospitalSidebar = ({ activePage }) => {
         <div className="mt-auto pt-6">
           <button 
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 rounded-lg bg-red-600 py-2.5 text-white text-sm font-bold shadow-md hover:bg-red-700 transition-all cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 rounded-lg bg-red-600 py-2.5 text-white text-sm font-bold shadow-md hover:bg-red-700 transition-all cursor-pointer active:scale-[0.98]"
           >
             <span className="material-symbols-outlined text-sm">logout</span>
             <span>Sign Out</span>
@@ -77,4 +90,4 @@ const HospitalSidebar = ({ activePage }) => {
   );
 };
 
-export default HospitalSidebar;
+export default StaffSidebar;
