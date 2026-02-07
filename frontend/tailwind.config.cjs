@@ -19,11 +19,16 @@ module.exports = {
         "card-dark": "#1E293B",
         "brand-dark": "#140d1b",
         "brand-purple-muted": "#734c9a",
+        "brand-maroon": "#7F0019",
+        "brand-tan": "#FAF7F2",
+        "brand-gold": "#C5A059",
       },
       fontFamily: {
         "display": ["Inter", "Public Sans", "sans-serif"],
         "inter": ["Inter", "sans-serif"],
         "public-sans": ["Public Sans", "sans-serif"],
+        "serif": ["Playfair Display", "serif"],
+        "sans": ["Lato", "sans-serif"],
       },
       borderRadius: {
         "DEFAULT": "0.25rem",
