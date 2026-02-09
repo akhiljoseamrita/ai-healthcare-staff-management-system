@@ -44,7 +44,13 @@ const HospitalSidebar = ({ activePage }) => {
             <span className="text-sm font-medium">Staffing</span>
           </a>
 
-        
+         <a 
+            href="/hospital/analytics" 
+            className={`${baseLinkClass} ${activePage === 'Recommendations' ? activeClass : inactiveClass}`}
+          >
+            <span className="material-symbols-outlined text-[22px]">auto_awesome</span>
+            <span className="text-sm font-medium">AI Recommendations</span>
+          </a>
 
           <a 
             href="/hospital/manage-shift" 
