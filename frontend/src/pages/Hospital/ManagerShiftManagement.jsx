@@ -10,7 +10,7 @@ import {
   getHospitalShiftSummary,
 } from '../../services/api';
 import { getHospitalId } from '../../services/hospitalSession';
-import { useToast } from '../../components/ToastProvider';
+import { useToast } from '../../components/toastContext';
 
 const toShiftCard = (item) => ({
   id: item.id,
@@ -72,7 +72,7 @@ const ManagerShiftManagement = () => {
 
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     if (!currentShiftId) return;
@@ -85,7 +85,7 @@ const ManagerShiftManagement = () => {
       }
     };
     load();
-  }, [currentShiftId]);
+  }, [currentShiftId, toast]);
 
   const handleDecline = async (applicationId) => {
     setIsActionLoading(true);

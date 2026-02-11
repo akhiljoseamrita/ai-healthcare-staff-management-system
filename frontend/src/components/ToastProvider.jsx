@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const ToastContext = createContext(null);
+import { ToastContext } from './toastContext';
 
 export function ToastProvider({ children }) {
   const api = useMemo(
@@ -31,10 +31,4 @@ export function ToastProvider({ children }) {
   );
 }
 
-export function useToast() {
-  const value = useContext(ToastContext);
-  if (!value) {
-    throw new Error('useToast must be used within ToastProvider');
-  }
-  return value;
-}
+

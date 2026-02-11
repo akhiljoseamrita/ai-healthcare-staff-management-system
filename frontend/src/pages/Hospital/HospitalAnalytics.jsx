@@ -4,7 +4,7 @@ import HospitalHeader from './HospitalHeader';
 
 import { assignHospitalShift, getHospitalMetaOptions, getHospitalRecommendations } from '../../services/api';
 import { getHospitalId } from '../../services/hospitalSession';
-import { useToast } from '../../components/ToastProvider';
+import { useToast } from '../../components/toastContext';
 
 const tagMeta = {
   skill_match: { icon: 'medical_services', label: 'Skill' },
@@ -18,6 +18,7 @@ const HospitalAnalytics = () => {
   const [departmentOptions, setDepartmentOptions] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState('All');
   const [departmentGroups, setDepartmentGroups] = useState([]);
+  const [aiMeta, setAiMeta] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [invitingKey, setInvitingKey] = useState(null);
   const [invitedKeys, setInvitedKeys] = useState([]);
@@ -40,6 +41,7 @@ const HospitalAnalytics = () => {
       limit: 6,
     });
     setDepartmentGroups(response.results || []);
+    setAiMeta(response.ai_meta || null);
   };
 
   useEffect(() => {
@@ -116,6 +118,11 @@ const HospitalAnalytics = () => {
               <p className="text-slate-500 text-sm mt-1">
                 Hospital side shows <strong>Top 6 Staff</strong> for each department.
               </p>
+              {aiMeta?.applied ? (
+                <p className="text-xs text-emerald-600 font-semibold mt-1">
+                  AI enhanced ranking active ({aiMeta.model}).
+                </p>
+              ) : null}
             </div>
 
             <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
@@ -180,6 +187,22 @@ const HospitalAnalytics = () => {
                             </div>
                             <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                               <div className="h-full bg-[#135bec] rounded-full transition-all duration-500" style={{ width: `${candidate.match}%` }} />
+                            </div>
+                            <div className="mt-2 text-xs text-slate-600 dark:text-slate-300 space-y-1">
+                              {candidate.ai_score !== undefined && candidate.ai_score !== null ? (
+                                <p>
+                                  <span className="font-semibold">AI Score:</span> {candidate.ai_score}%
+                                </p>
+                              ) : null}
+                              <p>
+                                <span className="font-semibold">Why AI picked this staff:</span>{' '}
+                                {candidate.ai_reason_short || 'Strong role match, schedule fit, and reliable shift history.'}
+                              </p>
+                              {(candidate.ai_reason_details || []).length > 0 ? (
+                                <p>
+                                  <span className="font-semibold">Factors:</span> {(candidate.ai_reason_details || []).join(' | ')}
+                                </p>
+                              ) : null}
                             </div>
                           </div>
 

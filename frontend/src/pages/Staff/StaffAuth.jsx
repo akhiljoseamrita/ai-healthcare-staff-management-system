@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { loginStaff, registerStaff } from '../../services/api';
 import { setStaffId, setStaffProfile, setStaffTokens } from '../../services/staffSession';
-import { useToast } from '../../components/ToastProvider';
+import { useToast } from '../../components/toastContext';
 
 const StaffAuth = () => {
   const navigate = useNavigate();

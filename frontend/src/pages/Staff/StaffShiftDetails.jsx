@@ -5,7 +5,7 @@ import StaffProfileModal from './StaffProfileModal';
 
 import { getStaffSchedule, withdrawStaffApplication } from '../../services/api';
 import { getStaffId } from '../../services/staffSession';
-import { useToast } from '../../components/ToastProvider';
+import { useToast } from '../../components/toastContext';
 
 const StaffShiftDetails = () => {
   const toast = useToast();

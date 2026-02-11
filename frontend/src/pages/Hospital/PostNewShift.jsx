@@ -4,7 +4,7 @@ import HospitalHeader from '../Hospital/HospitalHeader';
 
 import { createHospitalShift, getHospitalMetaOptions } from '../../services/api';
 import { getHospitalId } from '../../services/hospitalSession';
-import { useToast } from '../../components/ToastProvider';
+import { useToast } from '../../components/toastContext';
 
 const toIsoDateTime = (dateStr, timeStr) => {
   if (!dateStr || !timeStr) return null;
@@ -59,7 +59,7 @@ const PostNewShift = () => {
     };
 
     loadMeta();
-  }, []);
+  }, [toast]);
 
   const canSubmit = useMemo(() => {
     return (

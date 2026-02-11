@@ -4,7 +4,7 @@ import HospitalHeader from '../Hospital/HospitalHeader';
 
 import { getHospitalShiftSummary } from '../../services/api';
 import { getHospitalId } from '../../services/hospitalSession';
-import { useToast } from '../../components/ToastProvider';
+import { useToast } from '../../components/toastContext';
 
 const HospitalDashboard = () => {
   const toast = useToast();
@@ -33,7 +33,7 @@ const HospitalDashboard = () => {
     };
 
     load();
-  }, []);
+  }, [toast]);
 
   const metrics = useMemo(() => {
     const openShifts = rows.filter((item) => item.status === 'OPEN').length;

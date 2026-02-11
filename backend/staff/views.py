@@ -15,6 +15,11 @@ from django.views.decorators.http import require_GET, require_POST
 
 from hospital.models import HospitalReview, JobApplication, JobPosting, ShiftAssignment
 from staff.models import AppUser, AvailabilitySlot, Profession, StaffProfile
+from staff.services.recommendation_ai import (
+    enhance_recommendations_with_ai,
+    ensure_unique_reason_messages,
+    synthesize_short_reason_from_tags,
+)
 
 
 def _json_error(message, status=400):
@@ -347,7 +352,78 @@ def staff_recommendations(request):
         )
 
     scored.sort(key=lambda item: item["match"], reverse=True)
-    return JsonResponse({"results": scored[:limit]})
+    top_results = scored[:limit]
+    ai_context = {
+        "staff_id": staff.id,
+        "staff_profession": staff.profession.name,
+        "department_filter": department_filter,
+        "limit": limit,
+    }
+    ai_ready_candidates = [
+        {
+            "id": item["job_id"],
+            "name": item["name"],
+            "role": item["role"],
+            "department": item["department"],
+            "match": item["match"],
+            "tags": item.get("tags", []),
+        }
+        for item in top_results
+    ]
+    # Keep deterministic ranking as the baseline; AI only augments and reorders when available.
+    ai_ranked, ai_meta = enhance_recommendations_with_ai(
+        mode="staff_to_hospitals",
+        candidates=ai_ready_candidates,
+        context=ai_context,
+    )
+
+    final_by_id = {item["id"]: item for item in ai_ranked}
+    baseline_results = []
+    for item in top_results:
+        baseline_item = dict(item)
+        baseline_item["ai_score"] = baseline_item.get("match", 0)
+        baseline_item["ai_reason_short"] = synthesize_short_reason_from_tags(
+            baseline_item.get("tags", [])
+        )
+        baseline_item["ai_reason_details"] = []
+        baseline_item["ai_confidence"] = "LOW"
+        baseline_results.append(baseline_item)
+
+    final_results = []
+    for item in top_results:
+        merged_item = dict(item)
+        ai_item = final_by_id.get(item["job_id"], {})
+        if ai_item:
+            merged_item["ai_score"] = ai_item.get("ai_score")
+            merged_item["ai_reason_short"] = ai_item.get(
+                "ai_reason_short"
+            ) or synthesize_short_reason_from_tags(merged_item.get("tags", []))
+            merged_item["ai_reason_details"] = ai_item.get("ai_reason_details", [])
+            merged_item["ai_confidence"] = ai_item.get("ai_confidence")
+        else:
+            merged_item["ai_score"] = merged_item.get("match", 0)
+            merged_item["ai_reason_short"] = synthesize_short_reason_from_tags(
+                merged_item.get("tags", [])
+            )
+            merged_item["ai_reason_details"] = []
+            merged_item["ai_confidence"] = "LOW"
+        final_results.append(merged_item)
+
+    if ai_meta.get("applied"):
+        final_results.sort(
+            key=lambda row: (-(row.get("ai_score") or row.get("match") or 0), -(row.get("match") or 0))
+        )
+    ensure_unique_reason_messages(final_results)
+    ensure_unique_reason_messages(baseline_results)
+
+    return JsonResponse(
+        {
+            "results": final_results,
+            "baseline_results": baseline_results,
+            "ai_meta": ai_meta,
+            "recommendation_engine": "hybrid_ai" if ai_meta.get("applied") else "deterministic",
+        }
+    )
 
 
 @csrf_exempt

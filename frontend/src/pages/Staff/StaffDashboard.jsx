@@ -4,7 +4,7 @@ import StaffHeader from './StaffHeader';
 
 import { getStaffDashboard } from '../../services/api';
 import { getStaffId } from '../../services/staffSession';
-import { useToast } from '../../components/ToastProvider';
+import { useToast } from '../../components/toastContext';
 
 const dayOrder = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -36,7 +36,7 @@ const StaffDashboard = () => {
     };
 
     load();
-  }, []);
+  }, [toast]);
 
   const weeklyHours = useMemo(() => {
     const values = summary?.weekly_performance_hours || {};

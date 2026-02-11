@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { loginHospital } from '../../services/api';
 import { setHospitalId, setHospitalProfile, setHospitalTokens } from '../../services/hospitalSession';
-import { useToast } from '../../components/ToastProvider';
+import { useToast } from '../../components/toastContext';
 
 const HospitalLogin = () => {
   const navigate = useNavigate();

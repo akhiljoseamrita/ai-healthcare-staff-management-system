@@ -20,7 +20,7 @@ async function requestJson(path, options = {}) {
   let payload = null;
   try {
     payload = await response.json();
-  } catch (err) {
+  } catch {
     payload = null;
   }
 
