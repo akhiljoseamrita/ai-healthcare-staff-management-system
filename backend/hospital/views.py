@@ -5,7 +5,7 @@ from urllib import error as urlerror
 from urllib import request as urlrequest
 
 from django.db import IntegrityError, transaction
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -772,5 +772,68 @@ def staff_recommendations_for_job(request):
                 "fallback_reason": ",".join(ai_fallback_reasons[:3]) if ai_fallback_reasons else None,
             },
             "recommendation_engine": "hybrid_ai" if ai_applied_any else "deterministic",
+        }
+    )
+
+
+@require_GET
+def search_directory(request):
+    hospital_id = request.GET.get("hospital_id")
+    if not hospital_id:
+        return _json_error("hospital_id query param is required")
+
+    query = str(request.GET.get("q", "")).strip()
+    hospital = get_object_or_404(Hospital, id=hospital_id)
+
+    departments_qs = Department.objects.filter(hospital=hospital)
+    if query:
+        departments_qs = departments_qs.filter(name__icontains=query)
+    departments = list(
+        departments_qs.order_by("name").values("id", "name")
+    )
+
+    staff_qs = (
+        StaffProfile.objects.select_related("user", "profession")
+        .filter(status=StaffProfile.Status.ACTIVE, user__is_active=True)
+        .filter(
+            Q(
+                hospital_affiliations__hospital=hospital,
+                hospital_affiliations__status="APPROVED",
+            )
+            | Q(job_applications__job__hospital=hospital)
+            | Q(shift_assignments__job__hospital=hospital)
+        )
+        .distinct()
+    )
+    if query:
+        staff_qs = staff_qs.filter(user__full_name__icontains=query)
+
+    staff_profiles = [
+        {
+            "id": row["id"],
+            "full_name": row["user__full_name"],
+            "profession": row["profession__name"],
+            "rating_avg": float(row["rating_avg"]),
+            "total_completed_shifts": row["total_completed_shifts"],
+        }
+        for row in staff_qs.order_by("user__full_name").values(
+            "id",
+            "user__full_name",
+            "profession__name",
+            "rating_avg",
+            "total_completed_shifts",
+        )
+    ]
+
+    return JsonResponse(
+        {
+            "hospital": {"id": hospital.id, "name": hospital.name},
+            "query": query,
+            "counts": {
+                "departments": len(departments),
+                "staff_profiles": len(staff_profiles),
+            },
+            "departments": departments,
+            "staff_profiles": staff_profiles,
         }
     )

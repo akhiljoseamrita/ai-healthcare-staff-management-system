@@ -144,3 +144,19 @@ export async function getHospitalRecommendations({ jobId, hospitalId, department
   }
   return requestJson(`/api/hospital/recommendations/?${params.toString()}`);
 }
+
+export async function searchHospitalDirectory({ hospitalId, q = '' }) {
+  const params = new URLSearchParams({
+    hospital_id: String(hospitalId),
+    q,
+  });
+  return requestJson(`/api/hospital/search/directory/?${params.toString()}`);
+}
+
+export async function searchStaffDirectory({ staffId, q = '' }) {
+  const params = new URLSearchParams({
+    staff_id: String(staffId),
+    q,
+  });
+  return requestJson(`/api/staff/search/directory/?${params.toString()}`);
+}

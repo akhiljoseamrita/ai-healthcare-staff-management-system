@@ -13,7 +13,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
-from hospital.models import HospitalReview, JobApplication, JobPosting, ShiftAssignment
+from hospital.models import Department, Hospital, HospitalReview, JobApplication, JobPosting, ShiftAssignment
 from staff.models import AppUser, AvailabilitySlot, Profession, StaffProfile
 from staff.services.recommendation_ai import (
     enhance_recommendations_with_ai,
@@ -422,6 +422,51 @@ def staff_recommendations(request):
             "baseline_results": baseline_results,
             "ai_meta": ai_meta,
             "recommendation_engine": "hybrid_ai" if ai_meta.get("applied") else "deterministic",
+        }
+    )
+
+
+@require_GET
+def search_directory(request):
+    staff_id = request.GET.get("staff_id")
+    if not staff_id:
+        return _json_error("staff_id query param is required")
+
+    # Validates staff context for role-based access behavior.
+    get_object_or_404(StaffProfile.objects.select_related("user"), id=staff_id)
+    query = str(request.GET.get("q", "")).strip()
+
+    departments_qs = Department.objects.filter(job_postings__status=JobPosting.Status.OPEN)
+    hospitals_qs = Hospital.objects.filter(job_postings__status=JobPosting.Status.OPEN)
+
+    if query:
+        departments_qs = departments_qs.filter(
+            Q(name__icontains=query) | Q(hospital__name__icontains=query)
+        )
+        hospitals_qs = hospitals_qs.filter(name__icontains=query)
+
+    departments = list(
+        departments_qs.distinct()
+        .order_by("name")
+        .values("id", "name", "hospital_id", "hospital__name")
+    )
+
+    hospitals = list(
+        hospitals_qs.distinct()
+        .order_by("name")
+        .annotate(open_shift_count=Count("job_postings", filter=Q(job_postings__status=JobPosting.Status.OPEN)))
+        .values("id", "name", "city", "state", "country", "open_shift_count")
+    )
+
+    return JsonResponse(
+        {
+            "query": query,
+            "counts": {
+                "departments": len(departments),
+                "hospitals": len(hospitals),
+            },
+            "departments": departments,
+            "hospitals": hospitals,
         }
     )
 

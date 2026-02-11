@@ -60,6 +60,14 @@ const StaffSidebar = ({ activePage }) => {
             <span className="text-sm font-medium">Shift Management</span>
           </a>
 
+          <a
+            href="/staff/search"
+            className={`${baseLinkClass} ${activePage === 'directory-search' ? activeClass : inactiveClass}`}
+          >
+            <span className="material-symbols-outlined text-[22px]">manage_search</span>
+            <span className="text-sm font-medium">Directory Search</span>
+          </a>
+
           {/* Settings */}
           <a 
             href="/coming-soon" 

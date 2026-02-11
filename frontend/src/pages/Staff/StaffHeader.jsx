@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { getStaffProfile } from '../../services/staffSession';
 
@@ -9,8 +10,10 @@ const initialNotifications = [
 ];
 
 const StaffHeader = () => {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(() => getStaffProfile());
   const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [notifications, setNotifications] = useState(initialNotifications);
   const panelRef = useRef(null);
 
@@ -47,14 +50,25 @@ const StaffHeader = () => {
 
   const displayName = profile?.fullName || 'Staff User';
   const displayProfession = profile?.profession || 'Staff';
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    const q = searchTerm.trim();
+    navigate(q ? `/staff/search?q=${encodeURIComponent(q)}` : '/staff/search');
+  };
 
   return (
     <header className="sticky top-0 z-20 flex items-center justify-between bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-8 py-4">
       <div className="flex items-center gap-6 flex-1">
-        <div className="relative w-full max-w-md">
+        <form onSubmit={handleSearchSubmit} className="relative w-full max-w-md">
           <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
-          <input className="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-[#135bec]/20 placeholder:text-slate-500 outline-none" placeholder="Search hospital , departments..." type="text" />
-        </div>
+          <input
+            className="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-[#135bec]/20 placeholder:text-slate-500 outline-none"
+            placeholder="Search hospital , departments..."
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </form>
       </div>
 
       <div className="flex items-center gap-4">
