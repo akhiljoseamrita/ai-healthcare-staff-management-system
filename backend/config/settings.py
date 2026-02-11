@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from pathlib import Path
+from urllib.parse import urlparse
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -77,13 +78,28 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+#
+# Supabase Postgres is required for this backend.
+database_url = os.getenv("DATABASE_URL")
+if not database_url:
+    raise ValueError("DATABASE_URL is required and must point to Supabase Postgres.")
+
+parsed_db_url = urlparse(database_url)
+db_name = parsed_db_url.path.lstrip("/")
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": db_name,
+        "USER": parsed_db_url.username,
+        "PASSWORD": parsed_db_url.password,
+        "HOST": parsed_db_url.hostname,
+        "PORT": str(parsed_db_url.port or "5432"),
     }
 }
+
+if "sslmode=require" in database_url:
+    DATABASES["default"]["OPTIONS"] = {"sslmode": "require"}
 
 
 # Password validation

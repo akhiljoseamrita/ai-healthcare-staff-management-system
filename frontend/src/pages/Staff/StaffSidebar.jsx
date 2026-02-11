@@ -1,11 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { clearStaffId, clearStaffTokens } from '../../services/staffSession';
 
 const StaffSidebar = ({ activePage }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Redirect to staff login page
+    clearStaffTokens();
+    clearStaffId();
     navigate('/staff/auth');
   };
 

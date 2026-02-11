@@ -1,227 +1,129 @@
-import React from 'react';
-import Staff from './StaffSidebar';
+import React, { useEffect, useMemo, useState } from 'react';
+import StaffSidebar from './StaffSidebar';
 import StaffHeader from './StaffHeader';
 
+import { getStaffDashboard } from '../../services/api';
+import { getStaffId } from '../../services/staffSession';
+import { useToast } from '../../components/ToastProvider';
+
+const dayOrder = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
 const StaffDashboard = () => {
+  const toast = useToast();
+  const [summary, setSummary] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      const staffId = getStaffId();
+      if (!staffId) {
+        const message = 'Please login as staff first.';
+        toast.error(message);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const response = await getStaffDashboard({ staffId });
+        setSummary(response);
+      } catch (err) {
+        const message = err.message || 'Unable to load dashboard.';
+        toast.error(message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    load();
+  }, []);
+
+  const weeklyHours = useMemo(() => {
+    const values = summary?.weekly_performance_hours || {};
+    return dayOrder.map((day) => ({
+      day,
+      hours: Number(values[day] || 0),
+    }));
+  }, [summary]);
+
+  const maxHours = Math.max(...weeklyHours.map((d) => d.hours), 1);
+
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen font-public-sans transition-colors duration-300">
       <div className="flex h-screen overflow-hidden">
-
-        <Staff activePage="dashboard" />
+        <StaffSidebar activePage="dashboard" />
 
         <main className="flex-1 flex flex-col overflow-y-auto custom-scrollbar">
-          {/* Top Header */}
           <StaffHeader />
           <div className="max-w-[1400px] mx-auto px-8 py-8 w-full">
             <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
               <div>
-                <h1 className="text-3xl font-bold tracking-tight">Good Morning, Dr. Alex.</h1>
+                <h1 className="text-3xl font-bold tracking-tight">
+                  {summary?.greeting_name ? `Welcome, ${summary.greeting_name}` : 'Welcome'}
+                </h1>
               </div>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6">
-              <div className="md:col-span-4 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm relative overflow-hidden group">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg text-orange-600 dark:text-orange-400">
-                    <span className="material-symbols-outlined">pending_actions</span>
-                  </div>
-                  <span className="text-3xl font-bold">12</span>
-                </div>
-                <h3 className="font-semibold text-slate-700 dark:text-slate-200">Pending Applications</h3>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 uppercase tracking-wider">3 awaiting hospital review</p>
-                <div className="mt-4 w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-orange-500 h-full w-[65%]"></div>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                <p className="text-slate-500 text-sm font-medium">Pending Applications</p>
+                <p className="text-3xl font-bold mt-2">{summary?.pending_applications ?? 0}</p>
               </div>
-              <div className="md:col-span-4 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm relative overflow-hidden group">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg text-emerald-600 dark:text-emerald-400">
-                    <span className="material-symbols-outlined">check_circle</span>
-                  </div>
-                  <span className="text-3xl font-bold">4</span>
-                </div>
-                <h3 className="font-semibold text-slate-700 dark:text-slate-200">Accepted Shifts</h3>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 uppercase tracking-wider">Confirmed for this week</p>
-                <div className="mt-4 w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-emerald-500 h-full w-[40%]"></div>
-                </div>
+              <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                <p className="text-slate-500 text-sm font-medium">Accepted Shifts</p>
+                <p className="text-3xl font-bold mt-2">{summary?.accepted_shifts ?? 0}</p>
               </div>
-              <div className="md:col-span-4 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm relative overflow-hidden group">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400">
-                    <span className="material-symbols-outlined">assignment_turned_in</span>
-                  </div>
-                  <span className="text-3xl font-bold">28</span>
-                </div>
-                <h3 className="font-semibold text-slate-700 dark:text-slate-200">Completed Shifts</h3>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 uppercase tracking-wider">Total this month</p>
-                <div className="mt-4 w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-indigo-500 h-full w-[85%]"></div>
-                </div>
+              <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                <p className="text-slate-500 text-sm font-medium">Completed Shifts</p>
+                <p className="text-3xl font-bold mt-2">{summary?.completed_shifts ?? 0}</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-              {/* Income Goal */}
-              <div className="md:col-span-4 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-6">Income Goal</h3>
-                <div className="flex flex-col items-center py-4">
-                  <div className="relative w-40 h-40 flex items-center justify-center">
-                    <svg className="w-full h-full transform -rotate-90">
-                      <circle className="text-slate-100 dark:text-slate-700" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" strokeWidth="8"></circle>
-                      <circle className="text-primary" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" strokeDasharray="440" strokeDashoffset="70" strokeLinecap="round" strokeWidth="8"></circle>
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-3xl font-bold">84%</span>
-                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium uppercase">Achieved</span>
-                    </div>
-                  </div>
-                  <div className="mt-8 text-center">
-                    <div className="text-2xl font-bold">$4,200 <span className="text-slate-400 dark:text-slate-500 text-sm font-normal">/ $5,000</span></div>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 px-4 leading-relaxed">You're $800 away from your monthly target</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Weekly Performance */}
-              <div className="md:col-span-8 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm flex flex-col">
-                <div className="flex items-center justify-between mb-8">
-                  <div>
-                    <h3 className="font-bold text-slate-800 dark:text-slate-100">Weekly Performance</h3>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Average: 8.4 hrs/day</p>
-                  </div>
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md text-xs cursor-pointer">
-                    This Week
-                    <span className="material-symbols-outlined text-xs">expand_more</span>
-                  </div>
-                </div>
-                <div className="flex-1 flex items-end justify-between px-2 gap-2 mt-4">
-                  {[
-                    { day: 'Mon', height: 'h-[60%]', active: false },
-                    { day: 'Tue', height: 'h-[45%]', active: false },
-                    { day: 'Wed', height: 'h-[75%]', active: false },
-                    { day: 'Thu', height: 'h-[95%]', active: true },
-                    { day: 'Fri', height: 'h-[55%]', active: false },
-                    { day: 'Sat', height: 'h-[30%]', active: false },
-                    { day: 'Sun', height: 'h-[20%]', active: false },
-                  ].map((item, idx) => (
-                    <div key={idx} className="flex-1 flex flex-col items-center gap-2">
-                      <div className="w-full bg-slate-50 dark:bg-slate-700/50 rounded-t-lg h-32 relative group">
-                        <div className={`absolute bottom-0 left-0 right-0 ${item.active ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-600 group-hover:bg-primary/40'} rounded-t-lg transition-all ${item.height}`}></div>
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm mb-8">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4">Weekly Performance (Hours)</h3>
+              <div className="flex items-end justify-between gap-2 h-40">
+                {weeklyHours.map((item) => {
+                  const height = Math.max((item.hours / maxHours) * 100, 4);
+                  return (
+                    <div key={item.day} className="flex-1 flex flex-col items-center gap-2">
+                      <div className="w-full h-28 bg-slate-100 dark:bg-slate-700/50 rounded-t-lg relative overflow-hidden">
+                        <div
+                          className="absolute bottom-0 left-0 right-0 bg-primary rounded-t-lg"
+                          style={{ height: `${height}%` }}
+                        />
                       </div>
-                      <span className={`text-[10px] font-bold ${item.active ? 'text-primary' : 'text-slate-400'} uppercase`}>{item.day}</span>
+                      <span className="text-[11px] font-bold text-slate-500">{item.day}</span>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
-
-              {/* Up Next */}
             </div>
 
-            {/* Recent Activity */}
-            {/* Recent Activity with Monthly Stats Feature */}
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
-
-              {/* Header */}
               <div className="p-6 border-b border-slate-50 dark:border-slate-700 flex justify-between items-center">
                 <div>
                   <h3 className="font-bold text-slate-800 dark:text-slate-100">Recent Activity</h3>
-                  <p className="text-xs text-slate-400 mt-1">Updates from your applications</p>
-                </div>
-                <button className="text-xs font-bold text-primary uppercase tracking-widest hover:underline">
-                  View All
-                </button>
-              </div>
-
-              {/* NEW FEATURE: Last Month Summary Stats */}
-              <div className="grid grid-cols-3 divide-x divide-slate-50 dark:divide-slate-700 border-b border-slate-50 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
-
-                {/* Accepted Stats */}
-                <div className="p-4 flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-colors">
-                  <div className="text-2xl font-bold text-slate-700 dark:text-slate-200">14</div>
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[14px]">check_circle</span>
-                    Accepted
-                  </div>
-                  <p className="text-[10px] text-slate-400 mt-1">Last Month</p>
-                </div>
-
-                {/* Pending Stats */}
-                <div className="p-4 flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-amber-50/50 dark:hover:bg-amber-900/10 transition-colors">
-                  <div className="text-2xl font-bold text-slate-700 dark:text-slate-200">08</div>
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 mt-1 flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[14px]">hourglass_top</span>
-                    Pending
-                  </div>
-                  <p className="text-[10px] text-slate-400 mt-1">Last Month</p>
-                </div>
-
-                {/* Rejected Stats */}
-                <div className="p-4 flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-rose-50/50 dark:hover:bg-rose-900/10 transition-colors">
-                  <div className="text-2xl font-bold text-slate-700 dark:text-slate-200">03</div>
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 mt-1 flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[14px]">cancel</span>
-                    Rejected
-                  </div>
-                  <p className="text-[10px] text-slate-400 mt-1">Last Month</p>
                 </div>
               </div>
 
-              {/* Existing List */}
               <div className="divide-y divide-slate-50 dark:divide-slate-700">
-                {[
-                  {
-                    title: 'Application Rejected',
-                    hospital: 'General Hospital - ICU Day Shift (Nov 02)',
-                    status: 'Critical',
-                    icon: 'cancel',
-                    time: '1 hour ago',
-                    iconBg: 'bg-rose-100 dark:bg-rose-900/30',
-                    iconText: 'text-rose-600 dark:text-rose-400',
-                    tagBg: 'bg-rose-50 dark:bg-rose-900/20',
-                    tagText: 'text-rose-600 dark:text-rose-400'
-                  },
-                  {
-                    title: 'Application Accepted',
-                    hospital: 'Kaiser Permanente - Night Shift (Oct 28)',
-                    status: 'Confirmed',
-                    icon: 'check_circle',
-                    time: '2 hours ago',
-                    iconBg: 'bg-emerald-100 dark:bg-emerald-900/30',
-                    iconText: 'text-emerald-600 dark:text-emerald-400',
-                    tagBg: 'bg-emerald-50 dark:bg-emerald-900/20',
-                    tagText: 'text-emerald-600 dark:text-emerald-400'
-                  },
-                  {
-                    title: 'Pending Review',
-                    hospital: "St. Mary's Hospital - Emergency Room (Nov 05)",
-                    status: 'Under Review',
-                    icon: 'history',
-                    time: '4 hours ago',
-                    iconBg: 'bg-amber-100 dark:bg-amber-900/30',
-                    iconText: 'text-amber-600 dark:text-amber-400',
-                    tagBg: 'bg-amber-50 dark:bg-amber-900/20',
-                    tagText: 'text-amber-600 dark:text-amber-400'
-                  }
-                ].map((activity, idx) => (
-                  <div key={idx} className="p-6 flex items-start justify-between gap-4 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors cursor-pointer">
-                    <div className="flex items-start gap-4">
-                      <div className={`p-2 ${activity.iconBg} ${activity.iconText} rounded-full`}>
-                        <span className="material-symbols-outlined text-sm">{activity.icon}</span>
-                      </div>
+                {isLoading ? (
+                  <div className="p-6 text-sm text-slate-500">Loading...</div>
+                ) : (summary?.recent_activity || []).length === 0 ? (
+                  <div className="p-6 text-sm text-slate-500">No recent activity found.</div>
+                ) : (
+                  summary.recent_activity.map((activity) => (
+                    <div key={activity.application_id} className="p-6 flex items-start justify-between gap-4">
                       <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200">{activity.title}</h4>
-                          <span className={`px-2 py-0.5 rounded-full ${activity.tagBg} ${activity.tagText} text-[10px] font-bold uppercase`}>
-                            {activity.status}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{activity.hospital}</p>
+                        <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200">{activity.title}</h4>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                          {activity.hospital} • {activity.department}
+                        </p>
                       </div>
+                      <span className="text-xs text-slate-400 font-medium whitespace-nowrap">{activity.time}</span>
                     </div>
-                    <span className="text-xs text-slate-400 font-medium whitespace-nowrap">{activity.time}</span>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           </div>

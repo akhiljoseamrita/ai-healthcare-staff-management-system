@@ -1,50 +1,59 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { registerHospital } from '../../services/api';
+import { useToast } from '../../components/ToastProvider';
+
 const HospitalRegistration = () => {
   const navigate = useNavigate();
-  
-  // State for loading and success notification
-  const [isLoading, setIsLoading] = useState(false);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const toast = useToast();
 
-  // Dummy form handler
-  const handleRegister = (e) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [form, setForm] = useState({
+    hospitalName: '',
+    registrationNumber: '',
+    email: '',
+    phone: '',
+    location: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const handleChange = (field, value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleRegister = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate Network Request
-    setTimeout(() => {
-      setIsLoading(false);
-      setShowSuccessToast(true);
+    try {
+      await registerHospital({
+        hospital_name: form.hospitalName.trim(),
+        registration_number: form.registrationNumber.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        location: form.location.trim(),
+        password: form.password,
+        confirm_password: form.confirmPassword,
+      });
 
-      // Redirect to Login Page after 2 seconds
+      toast.success('Hospital registered successfully.');
       setTimeout(() => {
         navigate('/hospital/login');
-      }, 2000);
-    }, 1500);
+      }, 1200);
+    } catch (err) {
+      const message = err.message || 'Registration failed. Please try again.';
+      toast.error(message);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(false);
   };
 
   return (
     <div className="bg-white dark:bg-gray-900 text-[#0d121b] dark:text-white min-h-screen flex flex-col font-inter relative">
-      
-      {/* SUCCESS TOAST NOTIFICATION */}
-      {showSuccessToast && (
-        <div className="fixed top-24 right-5 z-[100] animate-bounce-in">
-          <div className="bg-white dark:bg-gray-800 border-l-4 border-green-500 shadow-xl rounded-r-lg p-6 flex items-start gap-4 min-w-[320px]">
-            <div className="text-green-500 bg-green-50 dark:bg-green-900/30 p-2 rounded-full">
-              <span className="material-symbols-outlined text-2xl">check_circle</span>
-            </div>
-            <div>
-              <h4 className="font-bold text-gray-900 dark:text-white text-lg">Success!</h4>
-              <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">Hospital registered successfully.</p>
-              <p className="text-xs text-gray-400 mt-2">Redirecting to login...</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Top Navigation Bar */}
       <header className="w-full bg-white dark:bg-gray-900 border-b border-[#cfd7e7] dark:border-gray-800 sticky top-0 z-50">
         <div className="w-full px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-1">
@@ -56,10 +65,7 @@ const HospitalRegistration = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-1 flex flex-col lg:flex-row w-full">
-        
-        {/* Left Branding Pane */}
         <div className="lg:w-[40%] bg-[#135bec]/5 dark:bg-[#135bec]/10 p-12 flex flex-col justify-center relative overflow-hidden min-h-[400px] lg:min-h-auto">
           <div className="relative z-10 space-y-6">
             <span className="inline-block px-3 py-1 bg-[#135bec]/10 text-[#135bec] text-xs font-bold rounded-full uppercase tracking-wider">
@@ -82,127 +88,117 @@ const HospitalRegistration = () => {
               </div>
             </div>
           </div>
-          
-          {/* Decorative Background Pattern */}
+
           <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-[#135bec]/10 rounded-full blur-3xl"></div>
           <div className="absolute -top-20 -right-20 w-80 h-80 bg-[#135bec]/5 rounded-full blur-3xl"></div>
         </div>
 
-        {/* Right Form Pane */}
         <div className="lg:w-[60%] flex flex-col items-center justify-start py-12 px-6 lg:px-20 bg-white dark:bg-gray-900">
           <div className="w-full max-w-[640px]">
-            {/* Header */}
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">Register Your Hospital</h2>
             </div>
-            
-            {/* Registration Form */}
+
             <form className="space-y-6" onSubmit={handleRegister}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                {/* Hospital Name */}
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold">Hospital Name</label>
                   <div className="relative">
-                    <input 
+                    <input
                       required
-                      className="w-full h-12 px-4 rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-[#135bec] focus:border-transparent outline-none transition-all placeholder:text-gray-400" 
-                      placeholder="e.g. Central Memorial Hospital" 
-                      type="text" 
+                      value={form.hospitalName}
+                      onChange={(e) => handleChange('hospitalName', e.target.value)}
+                      className="w-full h-12 px-4 rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-[#135bec] focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                      placeholder="e.g. Central Memorial Hospital"
+                      type="text"
                     />
-                    <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-sm">check_circle</span>
                   </div>
                 </div>
 
-                {/* Registration Number */}
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold">Registration Number</label>
-                  <input 
+                  <input
                     required
-                    className="w-full h-12 px-4 rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-[#135bec] focus:border-transparent outline-none transition-all placeholder:text-gray-400" 
-                    placeholder="e.g. REG-12345678" 
-                    type="text" 
+                    value={form.registrationNumber}
+                    onChange={(e) => handleChange('registrationNumber', e.target.value)}
+                    className="w-full h-12 px-4 rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-[#135bec] focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                    placeholder="e.g. REG-12345678"
+                    type="text"
                   />
                 </div>
 
-                {/* Email */}
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold">Hospital Email</label>
-                  <input 
+                  <input
                     required
-                    className="w-full h-12 px-4 rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-[#135bec] focus:border-transparent outline-none transition-all placeholder:text-gray-400" 
-                    placeholder="admin@hospital.com" 
-                    type="email" 
+                    value={form.email}
+                    onChange={(e) => handleChange('email', e.target.value)}
+                    className="w-full h-12 px-4 rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-[#135bec] focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                    placeholder="admin@hospital.com"
+                    type="email"
                   />
                 </div>
 
-                {/* Phone Number */}
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold">Phone Number</label>
-                  <input 
+                  <input
                     required
-                    className="w-full h-12 px-4 rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-[#135bec] focus:border-transparent outline-none transition-all placeholder:text-gray-400" 
-                    placeholder="+1 (555) 000-0000" 
-                    type="tel" 
+                    value={form.phone}
+                    onChange={(e) => handleChange('phone', e.target.value)}
+                    className="w-full h-12 px-4 rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-[#135bec] focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                    placeholder="+1 (555) 000-0000"
+                    type="tel"
                   />
                 </div>
               </div>
 
-              {/* Location */}
               <div className="space-y-2">
                 <label className="block text-sm font-semibold">Location</label>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">location_on</span>
-                  <input 
+                  <input
                     required
-                    className="w-full h-12 pl-10 pr-4 rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-[#135bec] focus:border-transparent outline-none transition-all placeholder:text-gray-400" 
-                    placeholder="Street Address, City, Country" 
-                    type="text" 
+                    value={form.location}
+                    onChange={(e) => handleChange('location', e.target.value)}
+                    className="w-full h-12 pl-10 pr-4 rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-[#135bec] focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                    placeholder="Street Address, City, Country"
+                    type="text"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-200 dark:border-gray-800">
-                {/* Password */}
                 <div className="space-y-2 relative">
                   <div className="flex items-center justify-between">
                     <label className="block text-sm font-semibold">Password</label>
-                    <div className="group relative cursor-help">
-                      <span className="material-symbols-outlined text-gray-400 text-[18px]">info</span>
-                      <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
-                        <p className="font-bold mb-1">Requirements:</p>
-                        <ul className="space-y-1 list-disc list-inside opacity-90">
-                          <li>Min 8 characters</li>
-                          <li>At least one number</li>
-                          <li>One special character</li>
-                        </ul>
-                      </div>
-                    </div>
                   </div>
-                  <input 
+                  <input
                     required
-                    className="w-full h-12 px-4 rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-[#135bec] focus:border-transparent outline-none transition-all" 
-                    placeholder="••••••••" 
-                    type="password" 
+                    minLength={8}
+                    value={form.password}
+                    onChange={(e) => handleChange('password', e.target.value)}
+                    className="w-full h-12 px-4 rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-[#135bec] focus:border-transparent outline-none transition-all"
+                    placeholder="••••••••"
+                    type="password"
                   />
                 </div>
 
-                {/* Confirm Password */}
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold">Confirm Password</label>
-                  <input 
+                  <input
                     required
-                    className="w-full h-12 px-4 rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-[#135bec] focus:border-transparent outline-none transition-all" 
-                    placeholder="••••••••" 
-                    type="password" 
+                    value={form.confirmPassword}
+                    onChange={(e) => handleChange('confirmPassword', e.target.value)}
+                    className="w-full h-12 px-4 rounded-lg border border-[#cfd7e7] dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-[#135bec] focus:border-transparent outline-none transition-all"
+                    placeholder="••••••••"
+                    type="password"
                   />
                 </div>
               </div>
-             
-              {/* Register Button with Loading State */}
-              <button 
+
+              <button
                 disabled={isLoading}
-                className="w-full h-14 bg-[#135bec] text-white font-bold rounded-xl shadow-lg shadow-[#135bec]/20 hover:bg-[#135bec]/90 hover:-translate-y-0.5 transition-all active:translate-y-0 cursor-pointer flex items-center justify-center gap-2" 
+                className="w-full h-14 bg-[#135bec] text-white font-bold rounded-xl shadow-lg shadow-[#135bec]/20 hover:bg-[#135bec]/90 hover:-translate-y-0.5 transition-all active:translate-y-0 cursor-pointer flex items-center justify-center gap-2 disabled:bg-[#135bec]/70"
                 type="submit"
               >
                 {isLoading ? (
@@ -214,13 +210,13 @@ const HospitalRegistration = () => {
                     <span>Registering...</span>
                   </>
                 ) : (
-                  "Register"
+                  'Register'
                 )}
               </button>
-              
+
               <div className="text-center pt-4">
                 <p className="text-sm text-gray-500">
-                  Already have an account? 
+                  Already have an account?
                   <Link className="text-[#135bec] font-semibold hover:underline ml-1" to="/hospital/login">
                     Log in here
                   </Link>

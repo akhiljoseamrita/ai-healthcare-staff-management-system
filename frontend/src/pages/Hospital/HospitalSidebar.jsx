@@ -1,10 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { clearHospitalId, clearHospitalTokens } from '../../services/hospitalSession';
 
 const HospitalSidebar = ({ activePage }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    clearHospitalTokens();
+    clearHospitalId();
     navigate('/hospital/login');
   };
 
@@ -46,7 +49,7 @@ const HospitalSidebar = ({ activePage }) => {
 
          <a 
             href="/hospital/analytics" 
-            className={`${baseLinkClass} ${activePage === 'Recommendations' ? activeClass : inactiveClass}`}
+            className={`${baseLinkClass} ${activePage === 'recommendations' ? activeClass : inactiveClass}`}
           >
             <span className="material-symbols-outlined text-[22px]">auto_awesome</span>
             <span className="text-sm font-medium">AI Recommendations</span>
