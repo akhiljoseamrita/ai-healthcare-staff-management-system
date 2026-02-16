@@ -15,4 +15,9 @@ urlpatterns = [
         views.withdraw_application,
         name="withdraw-application",
     ),
+    path(
+        "applications/<int:application_id>/approve/",
+        views.approve_application,
+        name="approve-application",
+    ),
 ]

@@ -612,6 +612,10 @@ def apply_for_job(request, job_id):
     staff_id = body.get("staff_id")
     if not staff_id:
         return _json_error("staff_id is required")
+    try:
+        staff_id = int(staff_id)
+    except (TypeError, ValueError):
+        return _json_error("staff_id must be an integer")
 
     job = get_object_or_404(JobPosting, id=job_id)
     application, created = JobApplication.objects.get_or_create(
@@ -649,3 +653,53 @@ def withdraw_application(request, application_id):
     application.save(update_fields=["status", "decision_at", "updated_at"])
 
     return JsonResponse({"message": "Application withdrawn", "status": application.status})
+
+
+@csrf_exempt
+@require_POST
+def approve_application(request, application_id):
+    body = _parse_json_body(request)
+    if body is None:
+        body = {}
+
+    staff_id = body.get("staff_id")
+    if not staff_id:
+        return _json_error("staff_id is required")
+    try:
+        staff_id = int(staff_id)
+    except (TypeError, ValueError):
+        return _json_error("staff_id must be an integer")
+
+    application = get_object_or_404(
+        JobApplication.objects.select_related("job"),
+        id=application_id,
+    )
+    if application.staff_id != staff_id:
+        return _json_error("Application does not belong to this staff", status=403)
+    if application.status in {JobApplication.Status.REJECTED, JobApplication.Status.WITHDRAWN}:
+        return _json_error("Application is not approvable in its current state", status=409)
+
+    if application.status != JobApplication.Status.ACCEPTED:
+        application.status = JobApplication.Status.ACCEPTED
+        application.decision_at = timezone.now()
+        application.save(update_fields=["status", "decision_at", "updated_at"])
+
+    try:
+        assignment, created = ShiftAssignment.objects.get_or_create(
+            job=application.job,
+            staff=application.staff,
+            defaults={
+                "shift_start_snapshot": application.job.shift_start,
+                "shift_end_snapshot": application.job.shift_end,
+            },
+        )
+    except Exception as exc:
+        return _json_error(str(exc))
+
+    return JsonResponse(
+        {
+            "message": "Shift confirmed" if created else "Shift already confirmed",
+            "status": application.status,
+            "assignment_id": assignment.id,
+        }
+    )

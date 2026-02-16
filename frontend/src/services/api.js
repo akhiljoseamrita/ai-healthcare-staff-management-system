@@ -79,6 +79,13 @@ export async function withdrawStaffApplication({ applicationId, staffId }) {
   });
 }
 
+export async function approveStaffApplication({ applicationId, staffId }) {
+  return requestJson(`/api/staff/applications/${applicationId}/approve/`, {
+    method: 'POST',
+    body: JSON.stringify({ staff_id: staffId }),
+  });
+}
+
 export async function registerHospital(payload) {
   return requestJson('/api/hospital/auth/register/', {
     method: 'POST',

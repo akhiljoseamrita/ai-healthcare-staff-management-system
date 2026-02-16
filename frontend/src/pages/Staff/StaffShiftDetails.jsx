@@ -3,7 +3,7 @@ import StaffSidebar from './StaffSidebar';
 import StaffHeader from './StaffHeader';
 import StaffProfileModal from './StaffProfileModal';
 
-import { getStaffSchedule, withdrawStaffApplication } from '../../services/api';
+import { approveStaffApplication, getStaffSchedule, withdrawStaffApplication } from '../../services/api';
 import { getStaffId } from '../../services/staffSession';
 import { useToast } from '../../components/toastContext';
 
@@ -14,6 +14,7 @@ const StaffShiftDetails = () => {
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const [isApproving, setIsApproving] = useState(false);
 
   const currentGroup = useMemo(() => {
     return groups.find((item) => item.id === currentGroupId) || groups[0] || null;
@@ -70,6 +71,27 @@ const StaffShiftDetails = () => {
       toast.error(message);
     } finally {
       setIsWithdrawing(false);
+    }
+  };
+
+  const handleApprove = async (applicationId) => {
+    const staffId = getStaffId();
+    if (!staffId) {
+      const message = 'Please login as staff first.';
+      toast.error(message);
+      return;
+    }
+
+    setIsApproving(true);
+    try {
+      await approveStaffApplication({ applicationId, staffId });
+      await loadSchedule();
+      toast.success('Invitation approved. Shift confirmed.');
+    } catch (err) {
+      const message = err.message || 'Unable to approve invitation.';
+      toast.error(message);
+    } finally {
+      setIsApproving(false);
     }
   };
 
@@ -152,9 +174,19 @@ const StaffShiftDetails = () => {
                           >
                             {isWithdrawing ? 'Withdrawing...' : 'Withdraw'}
                           </button>
-                          <button disabled className="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-sm font-bold border border-slate-200 dark:border-slate-700 cursor-not-allowed">
-                            Applied
-                          </button>
+                          {hospital.status === 'SHORTLISTED' ? (
+                            <button
+                              disabled={isApproving}
+                              className="px-4 py-2 rounded-lg bg-[#135bec] text-white text-sm font-bold hover:bg-[#135bec]/90 transition-all cursor-pointer shadow-md disabled:bg-[#135bec]/60"
+                              onClick={() => handleApprove(hospital.application_id)}
+                            >
+                              {isApproving ? 'Approving...' : 'Approve'}
+                            </button>
+                          ) : (
+                            <button disabled className="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-sm font-bold border border-slate-200 dark:border-slate-700 cursor-not-allowed">
+                              Applied
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))

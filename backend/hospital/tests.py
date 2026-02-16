@@ -135,6 +135,37 @@ class HospitalApiTests(TestCase):
         application.refresh_from_db()
         self.assertEqual(application.status, JobApplication.Status.ACCEPTED)
 
+    def test_invitation_stays_pending_until_application_accepted(self):
+        response = self.client.post(
+            reverse("create-shift-assignment", args=[self.job.id]),
+            data=json.dumps({"staff_id": self.staff_profile.id, "assigned_by_user_id": str(self.owner.id)}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 201)
+
+        application = JobApplication.objects.get(job=self.job, staff=self.staff_profile)
+        self.assertEqual(application.status, JobApplication.Status.SHORTLISTED)
+        self.assertFalse(
+            ShiftAssignment.objects.filter(job=self.job, staff=self.staff_profile).exists()
+        )
+
+        decision = self.client.post(
+            reverse("update-application-status", args=[application.id]),
+            data=json.dumps({"status": JobApplication.Status.ACCEPTED}),
+            content_type="application/json",
+        )
+        self.assertEqual(decision.status_code, 200)
+
+        assign_after_accept = self.client.post(
+            reverse("create-shift-assignment", args=[self.job.id]),
+            data=json.dumps({"staff_id": self.staff_profile.id, "assigned_by_user_id": str(self.owner.id)}),
+            content_type="application/json",
+        )
+        self.assertEqual(assign_after_accept.status_code, 201)
+        self.assertTrue(
+            ShiftAssignment.objects.filter(job=self.job, staff=self.staff_profile).exists()
+        )
+
     def test_hospital_recommendations_exclude_inactive_and_rank_by_skill(self):
         high_skill_user = AppUser.objects.create(
             id=uuid4(),

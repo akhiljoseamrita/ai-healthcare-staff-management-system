@@ -8,7 +8,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from hospital.models import Department, Hospital, JobPosting
+from hospital.models import Department, Hospital, JobApplication, JobPosting, ShiftAssignment
 from staff.models import AppUser, AvailabilitySlot, Profession, StaffProfile
 
 
@@ -140,3 +140,57 @@ class StaffAuthApiTests(TestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 404)
+
+
+class StaffApplicationApprovalApiTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.owner = AppUser.objects.create(
+            id=uuid4(),
+            full_name="Hospital Owner",
+            email="owner-approval@example.com",
+            role=AppUser.Role.HOSPITAL,
+        )
+        self.staff_user = AppUser.objects.create(
+            id=uuid4(),
+            full_name="Staff Approver",
+            email="staff-approval@example.com",
+            role=AppUser.Role.STAFF,
+            is_active=True,
+        )
+        self.profession = Profession.objects.create(name="Nurse")
+        self.staff = StaffProfile.objects.create(
+            user=self.staff_user,
+            profession=self.profession,
+            status=StaffProfile.Status.ACTIVE,
+        )
+        self.hospital = Hospital.objects.create(owner_user=self.owner, name="Approval Hospital")
+        self.department = Department.objects.create(hospital=self.hospital, name="ICU")
+        self.job = JobPosting.objects.create(
+            hospital=self.hospital,
+            department=self.department,
+            profession=self.profession,
+            required_staff_count=1,
+            shift_start=timezone.now() + timedelta(days=1),
+            shift_end=timezone.now() + timedelta(days=1, hours=8),
+            hourly_rate=70,
+            currency="USD",
+        )
+
+    def test_staff_can_approve_shortlisted_invitation_and_get_assignment(self):
+        application = JobApplication.objects.create(
+            job=self.job,
+            staff=self.staff,
+            status=JobApplication.Status.SHORTLISTED,
+        )
+
+        response = self.client.post(
+            reverse("approve-application", args=[application.id]),
+            data=json.dumps({"staff_id": self.staff.id}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        application.refresh_from_db()
+        self.assertEqual(application.status, JobApplication.Status.ACCEPTED)
+        self.assertTrue(ShiftAssignment.objects.filter(job=self.job, staff=self.staff).exists())

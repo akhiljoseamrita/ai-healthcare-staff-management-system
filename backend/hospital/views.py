@@ -413,6 +413,36 @@ def create_shift_assignment(request, job_id):
         return _json_error("staff_id is required")
 
     job = get_object_or_404(JobPosting, id=job_id)
+    application, _ = JobApplication.objects.get_or_create(
+        job=job,
+        staff_id=staff_id,
+        defaults={"status": JobApplication.Status.SHORTLISTED},
+    )
+
+    # Invitation flow: keep shift pending until the application is accepted.
+    if application.status != JobApplication.Status.ACCEPTED:
+        if application.status != JobApplication.Status.SHORTLISTED:
+            application.status = JobApplication.Status.SHORTLISTED
+            application.decision_at = timezone.now()
+            application.save(update_fields=["status", "decision_at", "updated_at"])
+
+        return JsonResponse(
+            {
+                "message": "Staff invitation sent",
+                "application_id": application.id,
+                "application_status": application.status,
+            },
+            status=201,
+        )
+
+    existing_assignment = ShiftAssignment.objects.filter(job=job, staff_id=staff_id).first()
+    if existing_assignment:
+        return JsonResponse(
+            {
+                "id": existing_assignment.id,
+                "message": "Staff already assigned",
+            }
+        )
 
     assignment = ShiftAssignment(
         job=job,
